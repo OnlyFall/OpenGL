@@ -1,142 +1,142 @@
-//#include <gl/freeglut.h> 
-//#include <math.h>
-//
-//#define pointArrSize 10
-//
-//GLvoid drawScene(GLvoid);
-//
-//GLvoid Reshape(int w, int h);
-//
-//void TimerFunction(int value);
-//void Mouse(int button, int state, int x, int y);
-//static int count = 0;
-//
-//struct vertex {
-//	int x;
-//	int y;
-//};
-//
-//struct circle {
-//	int x;
-//	int y;
-//	double radius = { 0.0 };
-//	double Rotation = { 0.0 };
-//	double Rotation2 = { 0.0 };
-//	double tempX;
-//	double tempY;
-//	bool check = false;
-//	int dir;
-//};
-//
-//static circle ci[100];
-//
-//
-//void main(int argc, char *argv[])
-//{
-//	glutInit(&argc, argv); glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-//	// 디스플레이 모드 설정 
-//	glutInitWindowPosition(0, 0);
-//	// 윈도우의 위치지정 
-//	glutInitWindowSize(1920, 1080); // 윈도우의 크기 지정
-//
-//	glutCreateWindow("Example2"); // 윈도우 생성 (윈도우 이름)
-//	glutDisplayFunc(drawScene); // 출력 함수의 지정 
-//	glutReshapeFunc(Reshape);
-//	glutMouseFunc(Mouse);
-//	glutTimerFunc(10, TimerFunction, 1);
-//	glutMainLoop();
-//} // 윈도우 출력 함수 
-//
-//
-//GLvoid drawScene(GLvoid)
-//{
-//	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//YELLOW
-//
-//	for (int i = 0; i < count; i++) {
-//		glBegin(GL_POINTS);
-//		if (ci[i].dir == 0) {
-//			for (double j = 0; j < ci[i].Rotation; j += 0.1) {
-//				glVertex2f(ci[i].x + ci[i].radius * cos(j), ci[i].y + ci[i].radius * sin(j));
-//				ci[i].radius += 0.5;
-//				ci[i].tempX = ci[i].radius * cos(j);
-//				ci[i].tempY = ci[i].radius * sin(j);
-//			}
-//
-//			if (ci[i].check == true) {
-//				for (double k = -1.4; k < ci[i].Rotation2; k += 0.1) {
-//					glVertex2f(ci[i].x + ci[i].tempX * 2 + ci[i].radius * sin(k), ci[i].y + ci[i].radius * cos(k));
-//					ci[i].radius -= 0.5;
-//				}
-//			}
-//		}
-//
-//		else if (ci[i].dir == 1) {
-//			for (double j = 0; j < ci[i].Rotation; j += 0.1) {
-//				glVertex2f(ci[i].x + ci[i].radius * sin(j), ci[i].y + ci[i].radius * cos(j));
-//				ci[i].radius += 0.5;
-//				ci[i].tempX = ci[i].radius * cos(19);
-//				ci[i].tempY = ci[i].radius * sin(19);
-//			}
-//
-//			if (ci[i].check == true) {
-//				for (double k = -3.3; k < ci[i].Rotation2 - 3.3; k += 0.1) {
-//					glVertex2f(ci[i].x + ci[i].tempX * 2 + ci[i].radius * cos(k), ci[i].y + ci[i].radius * sin(k));
-//					ci[i].radius -= 0.5;
-//				}
-//			}
-//		}
-//
-//		ci[i].radius = 0.1;
-//		glEnd();
-//	}
-//
-//	glFlush(); // 화면에 출력하기 
-//}
-//
-//GLvoid Reshape(int w, int h)    // 다시 그리기 함수
-//{
-//	glViewport(-1, -1, w, h);
-//	glOrtho(0, 1920, 1080, 0, 0, 1);
-//}
-//
-//void Mouse(int button, int state, int x, int y)
-//{
-//	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-//		ci[count].x = x;
-//		ci[count].y = y;
-//		ci[count].dir = rand() % 2;
-//		count++;
-//	}
-//}
-//
-//void TimerFunction(int value)
-//{
-//	glutPostRedisplay();
-//	for (int i = 0; i < count; i++) {
-//		if (ci[i].dir == 0) {
-//			if (ci[i].Rotation < 19.0)
-//				ci[i].Rotation += 0.5;
-//			else {
-//				ci[i].check = true;
-//				if (ci[i].Rotation2 < 19.0)
-//					ci[i].Rotation2 += 0.5;
-//			}
-//		}
-//		else if (ci[i].dir == 1) {
-//			if (ci[i].Rotation < 20.5)
-//				ci[i].Rotation += 0.5;
-//			else {
-//				ci[i].check = true;
-//				if (ci[i].Rotation2 < 19.0)
-//					ci[i].Rotation2 += 0.5;
-//			}
-//		}
-//	}
-//	
-//	glutTimerFunc(100, TimerFunction, 1);
-//}
+#include <gl/freeglut.h> 
+#include <math.h>
+
+#define pointArrSize 10
+
+GLvoid drawScene(GLvoid);
+
+GLvoid Reshape(int w, int h);
+
+void TimerFunction(int value);
+void Mouse(int button, int state, int x, int y);
+static int count = 0;
+
+struct vertex {
+	int x;
+	int y;
+};
+
+struct circle {
+	int x;
+	int y;
+	double radius = { 0.0 };
+	double Rotation = { 0.0 };
+	double Rotation2 = { 0.0 };
+	double tempX;
+	double tempY;
+	bool check = false;
+	int dir;
+};
+
+static circle ci[100];
+
+
+void main(int argc, char *argv[])
+{
+	glutInit(&argc, argv); glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	// 디스플레이 모드 설정 
+	glutInitWindowPosition(0, 0);
+	// 윈도우의 위치지정 
+	glutInitWindowSize(1920, 1080); // 윈도우의 크기 지정
+
+	glutCreateWindow("Example2"); // 윈도우 생성 (윈도우 이름)
+	glutDisplayFunc(drawScene); // 출력 함수의 지정 
+	glutReshapeFunc(Reshape);
+	glutMouseFunc(Mouse);
+	glutTimerFunc(10, TimerFunction, 1);
+	glutMainLoop();
+} // 윈도우 출력 함수 
+
+
+GLvoid drawScene(GLvoid)
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//YELLOW
+
+	for (int i = 0; i < count; i++) {
+		glBegin(GL_POINTS);
+		if (ci[i].dir == 0) {
+			for (double j = 0; j < ci[i].Rotation; j += 0.1) {
+				glVertex2f(ci[i].x + ci[i].radius * cos(j), ci[i].y + ci[i].radius * sin(j));
+				ci[i].radius += 0.5;
+				ci[i].tempX = ci[i].radius * cos(j);
+				ci[i].tempY = ci[i].radius * sin(j);
+			}
+
+			if (ci[i].check == true) {
+				for (double k = -1.4; k < ci[i].Rotation2; k += 0.1) {
+					glVertex2f(ci[i].x + ci[i].tempX * 2 + ci[i].radius * sin(k), ci[i].y + ci[i].radius * cos(k));
+					ci[i].radius -= 0.5;
+				}
+			}
+		}
+
+		else if (ci[i].dir == 1) {
+			for (double j = 0; j < ci[i].Rotation; j += 0.1) {
+				glVertex2f(ci[i].x + ci[i].radius * sin(j), ci[i].y + ci[i].radius * cos(j));
+				ci[i].radius += 0.5;
+				ci[i].tempX = ci[i].radius * cos(19);
+				ci[i].tempY = ci[i].radius * sin(19);
+			}
+
+			if (ci[i].check == true) {
+				for (double k = -3.3; k < ci[i].Rotation2 - 3.3; k += 0.1) {
+					glVertex2f(ci[i].x + ci[i].tempX * 2 + ci[i].radius * cos(k), ci[i].y + ci[i].radius * sin(k));
+					ci[i].radius -= 0.5;
+				}
+			}
+		}
+
+		ci[i].radius = 0.1;
+		glEnd();
+	}
+
+	glFlush(); // 화면에 출력하기 
+}
+
+GLvoid Reshape(int w, int h)    // 다시 그리기 함수
+{
+	glViewport(-1, -1, w, h);
+	glOrtho(0, 1920, 1080, 0, 0, 1);
+}
+
+void Mouse(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		ci[count].x = x;
+		ci[count].y = y;
+		ci[count].dir = rand() % 2;
+		count++;
+	}
+}
+
+void TimerFunction(int value)
+{
+	glutPostRedisplay();
+	for (int i = 0; i < count; i++) {
+		if (ci[i].dir == 0) {
+			if (ci[i].Rotation < 19.0)
+				ci[i].Rotation += 0.5;
+			else {
+				ci[i].check = true;
+				if (ci[i].Rotation2 < 19.0)
+					ci[i].Rotation2 += 0.5;
+			}
+		}
+		else if (ci[i].dir == 1) {
+			if (ci[i].Rotation < 20.5)
+				ci[i].Rotation += 0.5;
+			else {
+				ci[i].check = true;
+				if (ci[i].Rotation2 < 19.0)
+					ci[i].Rotation2 += 0.5;
+			}
+		}
+	}
+	
+	glutTimerFunc(100, TimerFunction, 1);
+}
 
 
 
