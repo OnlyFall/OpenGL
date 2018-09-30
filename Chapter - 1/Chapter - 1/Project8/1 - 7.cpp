@@ -48,6 +48,7 @@ void main(int argc, char *argv[])
 
 GLvoid drawScene(GLvoid)
 {
+	glPointSize(5.0);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor4f(1.0f, 1.0f, 0.0f, 0.0f);//YELLOW

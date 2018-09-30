@@ -1,6 +1,35 @@
-﻿  1 - 7.cpp
-d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 7.cpp(33): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 7.cpp(63): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 7.cpp(100): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 7.cpp(101): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  1 - 12.cpp
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(68): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(119): warning C4244: '인수': 'double'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(128): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(145): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(146): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(169): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(173): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(174): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(175): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(202): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(203): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(224): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(225): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(299): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(300): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(301): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(302): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(306): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(307): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(335): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(336): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(337): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(338): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(340): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(341): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(364): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(365): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(366): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(367): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(369): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(370): warning C4244: '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(407): warning C4101: 'tempY' :참조되지 않은 지역 변수입니다.
+d:\git\opengl\chapter - 1\chapter - 1\project8\1 - 12.cpp(406): warning C4101: 'tempX' :참조되지 않은 지역 변수입니다.
   Project8.vcxproj -> D:\Git\OpenGL\Chapter - 1\Chapter - 1\Debug\Project8.exe
