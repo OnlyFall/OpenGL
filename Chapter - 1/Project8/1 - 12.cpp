@@ -59,13 +59,13 @@ static vertex input[5];
 static int inputCount = 0;
 static BOOL inputDraw = FALSE;
 
-static double moveX;
-static double moveY;
+static float moveX;
+static float moveY;
 
 static BOOL radBool = FALSE;
 
-static int rectleftX, rectleftY;
-static int rectrightX, rectrightY;
+static float rectleftX, rectleftY;
+static float rectrightX, rectrightY;
 static int count = 0;
 static int wrong;
 void main(int argc, char *argv[])
@@ -85,7 +85,7 @@ void main(int argc, char *argv[])
 } // 윈도우 출력 함수 
 static int size = 20;
 static int circleShape = 1;
-static int triCenterX, triCenterY;
+static float triCenterX, triCenterY;
 
 GLvoid drawScene(GLvoid)
 {
@@ -175,7 +175,7 @@ GLvoid drawScene(GLvoid)
 	glColor4f((float)255, (float)0, 0.0f, 1.0f);
 
 	if(circleShape == 1)
-		glRectf(rectleftX, rectleftY, rectrightX, rectrightY);
+		glRectf(rectleftX + size, rectleftY + size, rectrightX - size, rectrightY - size);
 	
 	else if (circleShape == 2) {
 		glBegin(GL_TRIANGLES);
@@ -254,10 +254,10 @@ void Keyboard(unsigned char key, int x, int y)
 				zig[i].y = 300 - 200;
 		}
 
-		rectleftX = zig[0].x + size;
-		rectleftY = zig[0].y + size;
-		rectrightX = zig[0].x - size;
-		rectrightY = zig[0].y - size;
+		rectleftX = zig[0].x;
+		rectleftY = zig[0].y;
+		rectrightX = zig[0].x;
+		rectrightY = zig[0].y;
 
 		triCenterX = zig[0].x;
 		triCenterY = zig[0].y;
@@ -309,10 +309,10 @@ void TimerFunction(int value)
 	if (shape == 1) {
 		rad += 10;
 		if (circleShape == 1) {
-			rectleftX = ci[0].circleVertex[count].x + size;
-			rectleftY = ci[0].circleVertex[count].y + size;
-			rectrightX = ci[0].circleVertex[count].x - size;
-			rectrightY = ci[0].circleVertex[count].y - size;
+			rectleftX = ci[0].circleVertex[count].x;
+			rectleftY = ci[0].circleVertex[count].y;
+			rectrightX = ci[0].circleVertex[count].x;
+			rectrightY = ci[0].circleVertex[count].y;
 		}
 		else if (circleShape == 2) {
 			triCenterX = ci[0].circleVertex[count].x;
@@ -326,10 +326,10 @@ void TimerFunction(int value)
 
 	else if (shape == 2) {
 		if (circleShape == 1) {
-			rectleftX = rect[count].x + size;
-			rectleftY = rect[count].y + size;
-			rectrightX = rect[count].x - size;
-			rectrightY = rect[count].y - size;
+			rectleftX = rect[count].x;
+			rectleftY = rect[count].y;
+			rectrightX = rect[count].x;
+			rectrightY = rect[count].y;
 		}
 
 		else if (circleShape == 2) {
@@ -344,10 +344,10 @@ void TimerFunction(int value)
 
 	else if (shape == 3) {
 		if (circleShape == 1) {
-			rectleftX = ci[0].circleVertex[count].x + size;
-			rectleftY = ci[0].circleVertex[count].y + size;
-			rectrightX = ci[0].circleVertex[count].x - size;
-			rectrightY = ci[0].circleVertex[count].y - size;
+			rectleftX = ci[0].circleVertex[count].x;
+			rectleftY = ci[0].circleVertex[count].y;
+			rectrightX = ci[0].circleVertex[count].x;
+			rectrightY = ci[0].circleVertex[count].y;
 		}
 		else if (circleShape == 2) {
 			triCenterX = ci[0].circleVertex[count].x;
@@ -388,8 +388,8 @@ void TimerFunction(int value)
 	}
 	
 	else if (shape == 5 && inputDraw == TRUE) {
-		moveX = (float)(input[count + 1].x - input[count].x) / 10;
-		moveY = (float)(input[count + 1].y - input[count].y) / 10;
+		moveX = (float)(input[count + 1].x - input[count].x) / 50;
+		moveY = (float)(input[count + 1].y - input[count].y) / 50;
 
 		rectleftX += moveX;
 		rectleftY += moveY;
@@ -399,7 +399,7 @@ void TimerFunction(int value)
 		triCenterX += moveX;
 		triCenterY += moveY;
 		temp++;
-		if (temp == 10) {
+		if (temp == 50) {
 			count++;
 			temp = 0;
 		}
@@ -456,11 +456,11 @@ void Mouse(int button, int state, int x, int y)
 
 			triCenterX = input[0].x;
 			triCenterY = input[0].y;
+			glutTimerFunc(1, TimerFunction, 1);
 		}
 	}
 
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && inputDraw == FALSE) {
-		inputDraw = TRUE;
 		rectleftX = input[0].x + size;
 		rectleftY = input[0].y + size;
 		rectrightX = input[0].x - size;
@@ -468,5 +468,7 @@ void Mouse(int button, int state, int x, int y)
 
 		triCenterX = input[0].x;
 		triCenterY = input[0].y;
+		inputDraw = TRUE;
+		glutTimerFunc(1, TimerFunction, 1);
 	}
 }
