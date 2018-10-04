@@ -86,7 +86,7 @@ void main(int argc, char *argv[])
 static int size = 20;
 static int circleShape = 1;
 static float triCenterX, triCenterY;
-
+static BOOL to = TRUE;
 GLvoid drawScene(GLvoid)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -163,12 +163,14 @@ GLvoid drawScene(GLvoid)
 		glPushMatrix();
 		if (circleShape == 1) {
 			glTranslated(rectleftX - size, rectleftY - size, 0);
-			glRotated(rad, 0, 0, 1);
+			if (to == TRUE)
+				glRotated(rad, 0, 0, 1);
 			glTranslated((rectleftX - size) * -1, (rectleftY - size) * -1, 0);
 		}
 		else if (circleShape == 2) {
 			glTranslated(triCenterX, triCenterY, 0);
-			glRotated(rad, 0, 0, 1);
+			if(to == TRUE)
+				glRotated(rad, 0, 0, 1);
 			glTranslated(triCenterX * -1, triCenterY * -1, 0);
 		}
 	}
@@ -298,6 +300,13 @@ void Keyboard(unsigned char key, int x, int y)
 			radBool = FALSE;
 
 		dir = 2;
+		break;
+
+	case 'k':
+		if (to == FALSE)
+			to = TRUE;
+		else
+			to = FALSE;
 		break;
 	}
 }

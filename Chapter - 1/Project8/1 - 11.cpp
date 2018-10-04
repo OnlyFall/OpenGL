@@ -287,7 +287,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'Q':
-
+		PostQuitMessage(0);
 		break;
 	}
 
