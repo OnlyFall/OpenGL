@@ -56,35 +56,37 @@ GLvoid drawScene(GLvoid)
 	for (int i = 0; i < temp; ++i) {
 		glColor4f((float)(type[i].r / 255), (float)(type[i].g / 255), (float)(type[i].b / 255), 1.0f);
 		glPushMatrix();
-	
-		if (type[i].shape == 1) {
-			glTranslatef(type[i].x, type[i].y, 0.0f);
-			glRotatef(type[i].radian, 0, 1, 0);
-			glutWireCone(type[i].size, type[i].size, 5, 5);
-		}
+		if (type[i].size > 0) {
 
-		else if (type[i].shape == 2) {
-			glTranslated(type[i].x, type[i].y, 0.0f);
-			glRotatef(type[i].radian, 0, 1, 0);
-			glutWireCube(type[i].size);
-		}
+			if (type[i].shape == 1) {
+				glTranslatef(type[i].x, type[i].y, 0.0f);
+				glRotatef(type[i].radian, 1, 1, 1);
+				glutWireCone(type[i].size, type[i].size, 5, 5);
+			}
 
-		else if (type[i].shape == 3) {
-			glTranslated(type[i].x, type[i].y, 0.0f);
-			glRotatef(type[i].radian, 0, 1, 0);
-			glutWireSphere(type[i].size, 20, 20);
-		}
+			else if (type[i].shape == 2) {
+				glTranslated(type[i].x, type[i].y, 0.0f);
+				glRotatef(type[i].radian, 1, 1, 1);
+				glutWireCube(type[i].size);
+			}
 
-		else if (type[i].shape == 4) {
-			glTranslated(type[i].x, type[i].y, 0.0f);
-			glRotatef(type[i].radian, 0, 1, 0);
-			glutWireTorus(type[i].size, type[i].size + 10, 20, 20);
-		}
+			else if (type[i].shape == 3) {
+				glTranslated(type[i].x, type[i].y, 0.0f);
+				glRotatef(type[i].radian, 1, 1, 1);
+				glutWireSphere(type[i].size, 20, 20);
+			}
 
-		else if (type[i].shape == 5) {
-			glTranslated(type[i].x, type[i].y, 0.0f);
-			glRotatef(type[i].radian, 0, 1, 0);
-			glutWireTeapot(type[i].size);
+			else if (type[i].shape == 4) {
+				glTranslated(type[i].x, type[i].y, 0.0f);
+				glRotatef(type[i].radian, 1, 1, 1);
+				glutWireTorus(type[i].size, type[i].size + 10, 20, 20);
+			}
+
+			else if (type[i].shape == 5) {
+				glTranslated(type[i].x, type[i].y, 0.0f);
+				glRotatef(type[i].radian, 1, 1, 1);
+				glutWireTeapot(type[i].size);
+			}
 		}
 		glPopMatrix();
 	}

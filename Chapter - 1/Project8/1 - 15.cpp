@@ -15,7 +15,7 @@ void Mouse(int button, int state, int x, int y);
 void main(int argc, char *argv[])
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB |GLUT_DEPTH);
 	// 디스플레이 모드 설정 
 	glutInitWindowPosition(100, 100);
 	// 윈도우의 위치지정 
@@ -47,7 +47,8 @@ GLvoid drawScene(GLvoid)
 
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_MODELVIEW);
 
 	temp_hour = curr_time.tm_hour / 10;
