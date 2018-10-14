@@ -1,4 +1,4 @@
-#include <gl\freeglut.h>
+#include <gl/freeglut.h>
 #include <math.h>
 
 GLvoid drawScene(GLvoid);
