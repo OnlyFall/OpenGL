@@ -10,7 +10,7 @@ void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
-
+static int mode = 1;
 #define Max 360
 #define MAXPLANET 3
 
@@ -207,21 +207,28 @@ GLvoid drawScene(GLvoid)
 	glutSwapBuffers();
 	//	glFlush(); // 화면에 출력하기 
 }
+static float zoom = 45;
 
 GLvoid Reshape(int w, int h)
 {
 	GLfloat nRange = 800.0f;
 
-	glViewport(0, 0, w, h);  // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	glViewport(-1, -1, w, h);  // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
-	gluPerspective(45.0f, 1.0, 1.0, 1000.0);
-	glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	if (mode == 1) {
+		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
+		gluPerspective(zoom, 1.0, 1.0, 1000.0);
+		glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	}
+	else if (mode == 2)
+		glOrtho(-400.0, 400.0, -300.0, 300.0, -400.0, 400.0);
+
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity();
-	//glOrtho(0.0, 800.0, 0.0, 600.0, -400.0, 400.0);
 }
 
 static int count = 0;
@@ -343,8 +350,19 @@ void Keyboard(unsigned char key, int x, int y)
 			camera.zBOOL = FALSE;
 		break;
 
+	case 'k':
+		if (mode == 1) {
+			mode = 2;
+			Reshape(800, 600);
+		}
+		else if (mode == 2) {
+			mode = 1;
+			Reshape(800, 600);
+		}
+		break;
+
 	case 'w':
-		camera.y += 5;
+		camera.y -= 5;
 		break;
 
 	case 'a':
@@ -352,7 +370,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 's':
-		camera.y -= 5;
+		camera.y += 5;
 		break;
 
 	case 'd':
@@ -365,6 +383,16 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case '-':
 		camera.z -= 5;
+		break;
+
+	case '9':
+		zoom += 1;
+		Reshape(800, 600);
+		break;
+
+	case '0':
+		zoom -= 1;
+		Reshape(800, 600);
 		break;
 
 	case 'i':

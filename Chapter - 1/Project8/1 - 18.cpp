@@ -8,35 +8,67 @@ void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
+static int mode = 1;
+
+typedef struct set {
+	float x;
+	float y;
+	float z;
+};
 
 typedef struct Translate_pos {
-	float x = 400;
+	float x;
 	float y;
 	float z;
 	float degree;
 };
 
-struct Camera {
-	int xRad = -30;
-	int yRad;
-	int zRad;
+#define PT 20//도형 갯수 설정
+#define PI 3.141592 //파이
+typedef struct Shape
+{
+	Translate_pos pos;
+	Translate_pos move;
+	Translate_pos scale;
+	Translate_pos rot;
 
-	float x;
-	float y;
-	float z;
+	int size;
+	int select;
+	int height;
+	int slice;
+	int stacks;
 
-	BOOL xBOOL = FALSE;
-	int xDir;
-	BOOL yBOOL = FALSE;
-	int yDir;
-	BOOL zBOOL = FALSE;
-	int zDir;
+	BOOL any;
+
 };
 
-static Camera camera;
+Shape camera;
+Translate_pos EYE;
+Translate_pos AT;
+Translate_pos UP;
+//
+//struct Camera {
+//	int xRad = -30;
+//	int yRad;
+//	int zRad;
+//
+//	float x;
+//	float y;
+//	float z;
+//
+//	BOOL xBOOL = FALSE;
+//	int xDir;
+//	BOOL yBOOL = FALSE;
+//	int yDir;
+//	BOOL zBOOL = FALSE;
+//	int zDir;
+//};
+//
+////static Camera camera;
+//
+//
+//static Translate_pos camera;
 
-
-Translate_pos camera;
 struct position {
 	int x;
 	int y;
@@ -60,11 +92,47 @@ static float B;
 static int count = 0;
 static int temp = 0;
 static BOOL change = FALSE;
+
+
 void SetupRC()
 {
+	//EYE.x = 0;
+	//EYE.y = 30;
+	//EYE.z = 0;
+	camera.move.x = 0;
+	camera.move.y = 0;
+	camera.move.z = 0;
 	// 필요한 변수들, 좌표값 등의 초기화 // 기능 설정 초기화
 }
 
+const void camera_custom
+(double pos_x, double pos_y, double pos_z, //위치
+	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
+	const double move_x, const double move_y, const double move_z //움직임
+) {
+
+	EYE.x =
+		((cos(rot_y) * cos(rot_z)) +
+		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
+			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.y =
+		(((-1) * cos(rot_y) * sin(rot_z)) +
+		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.z =
+		(sin(rot_y) +
+		(((-1) * sin(rot_x)) * cos(rot_y)) +
+			(cos(rot_x) * cos(rot_y)));//stay
+
+
+
+	AT.x = pos_x;
+	AT.y = pos_y;
+	AT.z = pos_z;
+
+};
 
 void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성 
 	glutInit(&agrc, argv);
@@ -100,13 +168,15 @@ GLvoid drawScene(GLvoid)
 
 
 	glPushMatrix();
+	glTranslatef(camera.move.x, camera.move.y , camera.move.z);
 	gluLookAt(
-		camera.x, camera.y, camera.z,  //위5 eye
-		1, 0, 0, //방향 center
+		EYE.x, EYE.y, EYE.z,  //위5 eye
+		AT.x, AT.y, AT.z, //방향 center
 		0, 1, 0); //위쪽방
 
+	camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 
-	glRotatef(90, 0, 1, 0);
+	
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	{
 		glPushMatrix();
@@ -114,8 +184,8 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
-		glScalef(1, 0.1, 1);
+	//	glRotatef(30, 1, 0, 0);
+		glScalef(1, 0.01, 1);
 		glutSolidCube(400);
 		glPopMatrix();
 	}
@@ -127,8 +197,8 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glTranslatef(25, 25, 0);
-		glRotatef(30, 1, 0, 0);
+		glTranslatef(25,25, 10);
+	//	glRotatef(30, 1, 0, 0);
 		glScalef(1, 0.1, 0.1);
 		glutSolidCube(50);
 		glPopMatrix();
@@ -142,7 +212,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(zB, 0, 0, 1);
 
 		glTranslatef(0, 40, 10);
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glScalef(0.1, 1, 0.1);
 		glutSolidCube(50);
 		glPopMatrix();
@@ -156,7 +226,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(zB, 0, 0, 1);
 
 		glTranslatef(0, 15, 25);
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glScalef(0.1, 0.1, 1);
 		glutSolidCube(50);
 		glPopMatrix();
@@ -173,7 +243,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(-100, 70, 0);
 		glRotatef(rad2, 0, 1, 0);
@@ -188,7 +258,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(100, 70, 0);
 		glRotatef(rad3, 0, 1, 0);
@@ -207,7 +277,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(-100, 70, 0);
 		glRotatef(rad2, 0, 1, 0);
@@ -221,7 +291,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(100, 70, 0);
 		glRotatef(rad3, 0, 1, 0);
@@ -240,7 +310,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(-100, 70, 0);
 		glRotatef(rad2, 0, 1, 0);
@@ -255,7 +325,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(100, 70, 0);
 		glRotatef(rad3, 0, 1, 0);
@@ -274,7 +344,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(-100, 70, 0);
 		glRotatef(rad2, 0, 1, 0);
@@ -289,7 +359,7 @@ GLvoid drawScene(GLvoid)
 		glRotatef(yB, 0, 1, 0);
 		glRotatef(zB, 0, 0, 1);
 
-		glRotatef(30, 1, 0, 0);
+	//	glRotatef(30, 1, 0, 0);
 		glRotatef(rad, 0, 1, 0);
 		glTranslatef(100, 70, 0);
 		glRotatef(rad3, 0, 1, 0);
@@ -300,25 +370,31 @@ GLvoid drawScene(GLvoid)
 
 		glPopMatrix();
 	}
+
+	glPopMatrix();
 	glPopMatrix();
 	glutSwapBuffers();
 	//	glFlush(); // 화면에 출력하기 
 }
 
+static float zZoom = 45;
 GLvoid Reshape(int w, int h)
 {
 	GLfloat nRange = 800.0f;
 
 	glViewport(0, 0, w, h);  // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
-	gluPerspective(45.0f, 1.0, 1.0, 1000.0);
-	glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
-	glMatrixMode(GL_MODELVIEW);
+	if (mode == 1) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
+		gluPerspective(zZoom, 1.0, 1.0, 1000.0);
+		glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+		glMatrixMode(GL_MODELVIEW);
 
-	glLoadIdentity();
-	//glOrtho(0.0, 800.0, 0.0, 600.0, -400.0, 400.0);
+		glLoadIdentity();
+	}
+	else if(mode == 2)
+		glOrtho(0.0, 800.0, 0.0, 600.0, -400.0, 400.0);
 }
 
 static int dir = 1;
@@ -348,17 +424,17 @@ void TimerFunction(int value)
 	if (rad3Bool == TRUE)
 		rad3 += 10;
 
-	if (rad4Bool == TRUE)
-		rad4 += 10;
+	//if (rad4Bool == TRUE)
+	//	rad4 += 10;
 
-	if (xBool == TRUE)
-		xB = (xB + 10) % 360;
+	//if (xBool == TRUE)
+	//	xB = (xB + 10) % 360;
 
-	if (yBool == TRUE)
-		yB = (yB + 10) % 360;
+	//if (yBool == TRUE)
+	//	yB = (yB + 10) % 360;
 
-	if (zBool == TRUE)
-		zB = (zB + 10) % 360;
+	//if (zBool == TRUE)
+	//	zB = (zB + 10) % 360;
 
 	if (rBool == false) {
 		R += 3;
@@ -399,22 +475,6 @@ void TimerFunction(int value)
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'I':
-		rad = 0;
-		rad2 = 0;
-		rad3 = 0;
-		rad4 = 0;
-
-		rad1Bool = FALSE;
-		rad2Bool = FALSE;
-		rad3Bool = FALSE;
-		rad4Bool = FALSE;
-
-		R = 0;
-		G = 0;
-		B = 0;
-		break;
-
 	case 'L':
 		if (rad2Bool == FALSE)
 			rad2Bool = TRUE;
@@ -435,45 +495,87 @@ void Keyboard(unsigned char key, int x, int y)
 			rad1Bool = TRUE;
 		else if (rad1Bool == TRUE)
 			rad1Bool = FALSE;
-		
+
 		break;
+
+	case 'k':
+		if (mode == 1) {
+			mode = 2;
+			Reshape(800, 600);
+		}
+		else if (mode == 2) {
+			mode = 1;
+			Reshape(800, 600);
+		}
+		break;
+
 	case 'x':
-		if (xBool == FALSE)
-			xBool = TRUE;
-		else
-			xBool = FALSE;
+		camera.rot.x -= 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+		break;
+	case 'X':
+		camera.rot.x += 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 		break;
 
 	case 'y':
-		if (yBool == FALSE)
-			yBool = TRUE;
-		else
-			yBool = FALSE;
+		camera.rot.y -= 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+		break;
+	case 'Y':
+		camera.rot.y += 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 		break;
 
 	case 'z':
-		if (zBool == FALSE)
-			zBool = TRUE;
-		else
-			zBool = FALSE;
+		camera.rot.z -= 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+		break;
+	case 'Z':
+		camera.rot.z += 0.1;
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 		break;
 
-	case 'C':
-		if (change == FALSE)
-			change = TRUE;
-		else
-			change = FALSE;
+		//move
+	case 'w':
+		camera.move.y += 1;
+		break;
+	case 'a':
+		camera.move.x -= 1;
 		break;
 
+	case 's':
+		camera.move.y -= 1;
+		break;
+
+	case 'd':
+		camera.move.x += 1;
+		break;
+	case '+':
+		camera.move.z += 1;
+		break;
+	case '-':
+		camera.move.z -= 1;
+		break;
 	case 'i':
-		camera.x += 4;
+		camera.rot.degree = 0;
+		camera.move.x = 0;
+		camera.move.y = 0;
+		camera.move.z = 0;
+		camera.rot.x = 0;
+		camera.rot.y = 0;
+		camera.rot.z = 0;
+
 		break;
 
-	case 'o':
-		if (camera.x > 4)
-			camera.x -= 4;
-		else
-			camera.x -= 0.5;
+	case '9':
+		zZoom += 1;
+		Reshape(800, 600);
+		break;
+
+	case '0':
+		zZoom -= 1;
+		Reshape(800, 600);
 		break;
 
 	case '1':
@@ -486,6 +588,13 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case '3':
 		shape = 3;
+		break;
+
+	case 'C':
+		if (change == FALSE)
+			change = TRUE;
+		else
+			change = FALSE;
 		break;
 
 	case '4':

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\1 - 19">
+      <UniqueIdentifier>{bbd96925-f130-4a6e-beda-4a0559293b65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1 - 1.cpp">
@@ -66,10 +69,16 @@
     <ClCompile Include="1 - 18.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="1 - 19.cpp">
+    <ClCompile Include="1 - 20.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="1 - 20.cpp">
+    <ClCompile Include="1 - 21.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="1 - 19.cpp">
+      <Filter>소스 파일\1 - 19</Filter>
+    </ClCompile>
+    <ClCompile Include="1 - 22.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

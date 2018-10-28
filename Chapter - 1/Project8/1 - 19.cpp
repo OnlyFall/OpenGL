@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <random>
 #include <stdio.h>
+#include <math.h>
+
+#define M_PI 3.1415926535897937
 
 GLvoid drawScene(GLvoid);
 void TimerFunction(int value);
@@ -52,7 +55,9 @@ struct position {
 	float b;
 
 	int shape;
-	int radian;
+	int xradian;
+	int yradian;
+	int zradian;
 	GLdouble size;
 };
 
@@ -172,21 +177,25 @@ GLvoid drawScene(GLvoid)
 
 	{
 		glPushMatrix();
+		
 
-		if (xMove == TRUE) {
+		if (xMove == TRUE) 
 			glTranslatef(sp.x, 80, sp.z);
-			glRotatef(rad.radian, 0, 0, 1);
-		}
-		else if (zMove == TRUE) {
+		//	glRotatef(rad.xradian, 0, 0, 1);
+		//}
+		else if (zMove == TRUE) 
 			glTranslatef(sp.x, 80, sp.z);
-			glRotatef(rad.radian, 1, 0, 0);
-		}
-		else {
+		//	glRotatef(rad.yradian, 1, 0, 0);
+		//}
+		else 
 			glTranslatef(sp.x, 80, sp.z);
-			glRotatef(rad.radian, 0, 1, 0);
-		}
+		//	glRotatef(rad.zradian, 0, 1, 0);
+		//}
+
 		glutWireSphere(50, 20, 20);
-
+		glRotatef(rad.xradian, 1, 0, 0);
+		glRotatef(rad.yradian, 0, 1, 0);
+		glRotatef(rad.zradian, 0, 0, 1);
 		glPopMatrix();
 	}
 
@@ -230,36 +239,36 @@ void TimerFunction(int value)
 
 	if (xMove == TRUE) {
 		if (xDir == 1) {
-			if(sp.x < 160)
-				sp.x += 1;
-			rad.radian += 10;
+			if (sp.x > -160)
+				sp.x -= (float)((2 * M_PI * 50) / 360);
+			rad.xradian += 1;
 		}
 
 		else if (xDir == 2) {
-			if (sp.x > -160)
-				sp.x -= 1;
-			rad.radian -= 10;
+			if (sp.x < 160)
+				sp.x += (float)((2 * M_PI * 50) / 360);;
+			rad.xradian -= 1;
 		}
 	}
 
 	if (yMove == TRUE) {
 		if (yDir == 1)
-			rad.radian += 1;
+			rad.yradian += 1;
 		else
-			rad.radian -= 1;
+			rad.yradian -= 1;
 	}
 
 	if (zMove == TRUE) {
 		if (zDir == 2) {
 			if (sp.z < 160)
-				sp.z += 1;
-			rad.radian += 10;
+				sp.z += (float)((2 * M_PI * 50) / 360);;
+			rad.zradian += 1;
 		}
 		
 		else if (zDir == 1) {
 			if (sp.z > -160)
-				sp.z -= 1;
-			rad.radian -= 10;
+				sp.z -= (float)((2 * M_PI * 50) / 360);;
+			rad.zradian -= 1;
 		}
 	}
 
@@ -403,19 +412,19 @@ void Keyboard(unsigned char key, int x, int y)
 
 
 	case 'w':
-		camera.y += 5;
-		break;
-
-	case 'a':
-		camera.x -= 5;
-		break;
-
-	case 's':
 		camera.y -= 5;
 		break;
 
-	case 'd':
+	case 'a':
 		camera.x += 5;
+		break;
+
+	case 's':
+		camera.y += 5;
+		break;
+
+	case 'd':
+		camera.x -= 5;
 		break;
 
 	case '+':
