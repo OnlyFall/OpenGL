@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <gl\freeglut.h>
 #include <math.h>
-#include <Windows.h>
 
 GLvoid drawScene(GLvoid);
 void TimerFunction(int value);
@@ -159,7 +158,7 @@ struct STAR {
 	int R;
 	int G;
 	int B;
-
+	float r = 20;
 	BOOL updown = FALSE;
 	int count;
 };
@@ -276,7 +275,7 @@ void SetupRC()
 	rect.x = 400;
 	rect.y = -50;
 }
-
+void processMousePassiveMotion(int x, int y);
 static BOOL slice = FALSE;
 void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성 
 	glutInit(&agrc, argv);
@@ -288,6 +287,7 @@ void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성
 	SetupRC();
 	// 필요한 콜백 함수 설정
 	glutMotionFunc(Motion);
+	glutPassiveMotionFunc(processMousePassiveMotion);
 	glutMouseFunc(Mouse);
 	glutDisplayFunc(drawScene); // 출력 콜백 함수 
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백 함수
@@ -449,9 +449,9 @@ GLvoid StarLight(GLvoid)
 		glTranslatef(-mystar[i].x, -mystar[i].y, 0);
 		glColor3f((float)mystar[i].R / 255, (float)mystar[i].G / 255, (float)mystar[i].B / 255);
 		glBegin(GL_TRIANGLES);
-		glVertex2f(mystar[i].x - 25, mystar[i].y - 25);
-		glVertex2f(mystar[i].x + 25, mystar[i].y - 25);
-		glVertex2f(mystar[i].x, mystar[i].y + 25);
+		glVertex2f(mystar[i].x - mystar[i].r, mystar[i].y - mystar[i].r);
+		glVertex2f(mystar[i].x + mystar[i].r, mystar[i].y - mystar[i].r);
+		glVertex2f(mystar[i].x, mystar[i].y + mystar[i].r);
 		glEnd();
 
 		glPushMatrix();
@@ -461,9 +461,9 @@ GLvoid StarLight(GLvoid)
 		glTranslatef(-mystar[i].x, -(mystar[i].y), 0);
 
 		glBegin(GL_TRIANGLES);
-		glVertex2f(mystar[i].x - 25, mystar[i].y - 25);
-		glVertex2f(mystar[i].x + 25, mystar[i].y - 25);
-		glVertex2f(mystar[i].x, mystar[i].y + 25);
+		glVertex2f(mystar[i].x - mystar[i].r, mystar[i].y - mystar[i].r);
+		glVertex2f(mystar[i].x + mystar[i].r, mystar[i].y - mystar[i].r);
+		glVertex2f(mystar[i].x, mystar[i].y + mystar[i].r);
 		glEnd();
 
 		glPopMatrix();
@@ -523,10 +523,27 @@ GLvoid drawScene(GLvoid)
 static BOOL starCheck = FALSE;
 static BOOL clip = FALSE;
 static float zZoom = 45;
+BOOL starCrash = FALSE;
 GLvoid Reshape(int w, int h)
 {
-	glViewport(-1, -1, w, h);
-	glOrtho(0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	GLfloat nRange = 800.0f;
+
+	glViewport(0, 0, w, h);  // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	bool transe = false;
+	//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
+	if (transe) //원근투영
+	{
+		gluPerspective(45.0f, 1.0, 1.0, 1000.0);
+		glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	}
+	else //직각투영
+		glOrtho(0, 800, 0, 600, -400, 400);
+
+	//모델 뷰 행렬 스택 재설정
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 void TimerFunction(int value)
@@ -572,12 +589,25 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
+
+				for (int i = 0; i < starcount - 2; ++i) {
+					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+						mystar[starcount - 1].count = 100;
+						mystar[i].r += 5;
+						starCrash = TRUE;
+					}
+				}
 			}
 			else if (mystar[starcount - 1].count == 100) {
 				SliceTriangle[0].SaveOn = FALSE;
 				SliceTriangle[0].end = FALSE;
 				SliceTriangle[0].click = FALSE;
 				SliceTriangle[0].count = 100;
+
+				if (starCrash == TRUE) {
+					mystar[starcount - 1].count = 0;
+					starcount -= 1;
+				}
 				starCheck = FALSE;
 			}
 		}
@@ -587,12 +617,25 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
+
+				for (int i = 0; i < starcount - 2; ++i) {
+					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+						mystar[starcount - 1].count = 100;
+						mystar[i].r += 5;
+						starCrash = TRUE;
+					}
+				}
 			}
 			else if (mystar[starcount - 1].count == 100) {
 				SliceTriangle[1].SaveOn = FALSE;
 				SliceTriangle[1].end = FALSE;
 				SliceTriangle[1].click = FALSE;
 				SliceTriangle[1].count = 100;
+
+				if (starCrash == TRUE) {
+					mystar[starcount - 1].count = 0;
+					starcount -= 1;
+				}
 				starCheck = FALSE;
 			}
 		}
@@ -665,12 +708,26 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
+
+				for (int i = 0; i < starcount - 2; ++i) {
+					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+						mystar[starcount - 1].count = 100;
+						mystar[i].r += 5;
+						starCrash = TRUE;
+					}
+				}
 			}
 			else if (mystar[starcount - 1].count == 100) {
 				SliceTriangle[0].SaveOn = FALSE;
 				SliceTriangle[0].end = FALSE;
 				SliceTriangle[0].click = FALSE;
 				SliceTriangle[0].count = 100;
+
+				if (starCrash == TRUE) {
+					mystar[starcount - 1].count = 0;
+					starcount -= 1;
+				}
+
 				starCheck = FALSE;
 			}
 		}
@@ -680,12 +737,25 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
+
+				for (int i = 0; i < starcount - 2; ++i) {
+					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+						mystar[starcount - 1].count = 100;
+						mystar[i].r += 5;
+						starCrash = TRUE;
+					}
+				}
 			}
+			
 			else if (mystar[starcount - 1].count == 100) {
 				SliceTriangle[1].SaveOn = FALSE;
 				SliceTriangle[1].end = FALSE;
 				SliceTriangle[1].click = FALSE;
 				SliceTriangle[1].count = 100;
+				if (starCrash == TRUE) {
+					mystar[starcount - 1].count = 0;
+					starcount -= 1;
+				}
 				starCheck = FALSE;
 			}
 		}
@@ -1266,4 +1336,10 @@ int check_intersect(struct point * pA, struct point * pB, struct point * pC, str
 	if ((f_CD(Ax, Ay) * f_CD(Bx, By)) > 0) return 0;
 
 	return 1;
+}
+
+void processMousePassiveMotion(int x, int y)
+{
+	
+	
 }
