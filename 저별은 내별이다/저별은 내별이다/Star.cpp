@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <gl\freeglut.h>
 #include <math.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm")
 
+#define SOUND_FILE_BGM "PIKASONIC - Miss You (320  kbps) (ytformp3.com).mp3"
 GLvoid drawScene(GLvoid);
 void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
@@ -36,6 +39,36 @@ struct point { float x, y; };
 #define Dy (pD->y)
 
 int check_intersect(struct point * pA, struct point * pB, struct point * pC, struct point * pD);
+
+MCI_OPEN_PARMS      mciOpenParms;
+MCI_PLAY_PARMS       mciPlayParms;
+MCI_STATUS_PARMS   mciStatus;
+
+UINT wDeviceID = 0;
+
+DWORD LoadWAV(HWND hWnd, LPCTSTR lpszWave)
+{
+	DWORD Result;
+	mciOpenParms.lpstrDeviceType = L"mpegvideo";
+	mciOpenParms.lpstrElementName = lpszWave;
+	Result = mciSendCommand(wDeviceID, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD)(LPVOID)&mciOpenParms);
+	if (Result)
+		return Result;
+	wDeviceID = mciOpenParms.wDeviceID;
+	mciPlayParms.dwCallback = (DWORD)hWnd;
+	if (Result)
+		return Result;
+	return 0;
+}
+
+void LoadSound()
+{
+	HWND hWnd = NULL;
+	DWORD SelectBGM;
+	SelectBGM = LoadWAV(hWnd, L"PIKASONIC - Miss You (320  kbps) (ytformp3.com).mp3");
+	SelectBGM = mciSendCommand(1, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mciPlayParms);
+}
+
 
 struct point_3 {
 	float x = 0;
@@ -274,6 +307,7 @@ void SetupRC()
 	SliceTriangle[1].SaveOn = TRUE;
 	rect.x = 400;
 	rect.y = -50;
+	LoadSound();
 }
 void processMousePassiveMotion(int x, int y);
 static BOOL slice = FALSE;
@@ -548,6 +582,7 @@ GLvoid Reshape(int w, int h)
 
 void TimerFunction(int value)
 {
+
 	glutPostRedisplay();
 
 	for (int i = 0; i < 8; ++i) {
@@ -589,12 +624,14 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
-
-				for (int i = 0; i < starcount - 2; ++i) {
-					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
-						mystar[starcount - 1].count = 100;
-						mystar[i].r += 5;
-						starCrash = TRUE;
+				if (starcount > 0) {
+					starCrash = FALSE;
+					for (int i = 0; i < starcount - 2; ++i) {
+						if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+							mystar[starcount - 1].count = 100;
+							mystar[i].r += 5;
+							starCrash = TRUE;
+						}
 					}
 				}
 			}
@@ -618,11 +655,14 @@ void TimerFunction(int value)
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
 
-				for (int i = 0; i < starcount - 2; ++i) {
-					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
-						mystar[starcount - 1].count = 100;
-						mystar[i].r += 5;
-						starCrash = TRUE;
+				if (starcount > 0) {
+					starCrash = FALSE;
+					for (int i = 0; i < starcount - 2; ++i) {
+						if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+							mystar[starcount - 1].count = 100;
+							mystar[i].r += 5;
+							starCrash = TRUE;
+						}
 					}
 				}
 			}
@@ -708,12 +748,14 @@ void TimerFunction(int value)
 				mystar[starcount - 1].x += mystar[starcount - 1].moveX;
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
-
-				for (int i = 0; i < starcount - 2; ++i) {
-					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
-						mystar[starcount - 1].count = 100;
-						mystar[i].r += 5;
-						starCrash = TRUE;
+				if (starcount > 0) {
+					starCrash = FALSE;
+					for (int i = 0; i < starcount - 2; ++i) {
+						if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+							mystar[starcount - 1].count = 100;
+							mystar[i].r += 5;
+							starCrash = TRUE;
+						}
 					}
 				}
 			}
@@ -727,7 +769,6 @@ void TimerFunction(int value)
 					mystar[starcount - 1].count = 0;
 					starcount -= 1;
 				}
-
 				starCheck = FALSE;
 			}
 		}
@@ -738,11 +779,14 @@ void TimerFunction(int value)
 				mystar[starcount - 1].y += mystar[starcount - 1].moveY;
 				mystar[starcount - 1].count++;
 
-				for (int i = 0; i < starcount - 2; ++i) {
-					if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
-						mystar[starcount - 1].count = 100;
-						mystar[i].r += 5;
-						starCrash = TRUE;
+				if (starcount > 0) {
+					starCrash = FALSE;
+					for (int i = 0; i < starcount - 2; ++i) {
+						if (mystar[starcount - 1].r + mystar[i].r > sqrtf((mystar[starcount - 1].x - mystar[i].x) * (mystar[starcount - 1].x - mystar[i].x) + (mystar[starcount - 1].y - mystar[i].y) * (mystar[starcount - 1].y - mystar[i].y))) {
+							mystar[starcount - 1].count = 100;
+							mystar[i].r += 5;
+							starCrash = TRUE;
+						}
 					}
 				}
 			}
@@ -796,7 +840,6 @@ void TimerFunction(int value)
 			SliceTriangle[1].count = 0;
 			slice = FALSE;
 			clip = FALSE;
-			starCheck = FALSE;
 			SliceTriangle[0].SaveOn = TRUE;
 			SliceTriangle[1].SaveOn = TRUE;
 
