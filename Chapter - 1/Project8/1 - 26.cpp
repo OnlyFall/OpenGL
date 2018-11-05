@@ -679,6 +679,7 @@ static int startX, startY;
 static int endX, endY;
 static int dir = 0;
 static BOOL left = FALSE;
+
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
@@ -689,7 +690,6 @@ void Mouse(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 		left = FALSE;
-		dir = 0;
 	}
 	glutPostRedisplay();
 
@@ -791,7 +791,8 @@ void Timerfunction(int value) {
 	}
 
 	if (dir == 1) {
-		zRad = (zRad + 1) % 360;
+		if(left == TRUE)
+			zRad = (zRad + 1) % 360;
 		if (zRad > 0 && zRad < 90) {
 			for (int i = 0; i < 3; ++i) {
 				if (box[i].x > -45)
@@ -807,7 +808,7 @@ void Timerfunction(int value) {
 
 		else if (zRad > 180 && zRad < 270) {
 			for (int i = 0; i < 3; ++i) {
-				if (box[i].x > -45)
+				if (box[i].x < 45)
 					box[i].x += 1;
 			}
 		}
@@ -820,10 +821,12 @@ void Timerfunction(int value) {
 		}
 	}
 	else if (dir == 2) {
-		zRad = (zRad - 1) % 360;
+		if(left == TRUE)
+			zRad = (zRad - 1) % 360;
+
 		if (zRad > 0 && zRad < 90) {
 			for (int i = 0; i < 3; ++i) {
-				if (box[i].x > -45)
+				if (box[i].x < 45)
 					box[i].x += 1;
 			}
 		}
