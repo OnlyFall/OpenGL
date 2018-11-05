@@ -821,8 +821,11 @@ void Timerfunction(int value) {
 		}
 	}
 	else if (dir == 2) {
-		if(left == TRUE)
-			zRad = (zRad - 1) % 360;
+		if (left == TRUE) {
+			zRad -= 1;
+			if (zRad < 0)
+				zRad = 360;
+		}
 
 		if (zRad > 0 && zRad < 90) {
 			for (int i = 0; i < 3; ++i) {
@@ -832,7 +835,7 @@ void Timerfunction(int value) {
 		}
 		else if (zRad > 90 && zRad < 180) {
 			for (int i = 0; i < 3; ++i) {
-				if (box[i].y < 45)
+				if (box[i].y > -45)
 					box[i].y -= 1;
 			}
 		}
@@ -846,7 +849,7 @@ void Timerfunction(int value) {
 
 		else if (zRad > 270 && zRad < 360) {
 			for (int i = 0; i < 3; ++i) {
-				if (box[i].y > -45)
+				if (box[i].y < 45)
 					box[i].y += 1;
 			}
 		}
