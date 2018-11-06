@@ -24,19 +24,52 @@ GLvoid RobotMiddle()
 	glPopMatrix();
 }
 
-GLvoid RobotLeg()
+GLvoid RobotLeg(int rad)
 {
+	glColor3f(1.0f, 0.4f, 0.5f);
 	glPushMatrix();
-
+	glTranslatef(5, -35, 0);
+	glTranslatef(0, 15, 0);
+	glRotatef(rad, 1, 0, 0);
+	glTranslatef(0, -15, 0);
+	glScalef(0.5, 2, 0.5);
+	glutSolidCube(10);
 	glPopMatrix();
 
 	glPushMatrix();
-
+	glTranslatef(-5, -35, 0);
+	glTranslatef(0, 15, 0);
+	glRotatef(-rad, 1, 0, 0);
+	glTranslatef(0, -15, 0);
+	glScalef(0.5, 2, 0.5);
+	glutSolidCube(10);
 	glPopMatrix();
 }
 
-GLvoid RobotHand()
+GLvoid RobotHand(int rad)
 {
+	glColor3f(0.2f, 1.0f, 0.5f);
+	glPushMatrix();
+	glTranslatef(10, 0, 0);
+	glTranslatef(0, -15, 0);
+	glTranslatef(0, 15, 0);
+	glRotatef(rad, 1, 0, 0);
+	glRotatef(10, 0, 0, 1);
+	glTranslatef(0, -15, 0);
+	glScalef(0.5, 2, 0.5);
+	glutSolidCube(10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-10, 0, 0);
+	glTranslatef(0, -15, 0);
+	glTranslatef(0, 15, 0);
+	glRotatef(-rad, 1, 0, 0);
+	glRotatef(-10, 0, 0, 1);
+	glTranslatef(0, -15, 0);
+	glScalef(0.5, 2, 0.5);
+	glutSolidCube(10);
+	glPopMatrix();
 
 }
 

@@ -127,7 +127,8 @@ typedef struct BoOL
 #define DEGTORAD pi/180
 #define pointArrSize 20
 #define ShapeSize 15
-
+static int seeDir = 0;
+void SpecialKeys(int key, int x, int y);
 double angle;
 int direction;
 int LoAdder;
@@ -368,6 +369,7 @@ int shade_count;
 static point PlanePosition[360];
 void SetupRC()
 {
+	BallDir = 1;
 	for (int i = 0; i < 10; ++i) {
 		pingpong[i].z = rand() % 45;
 		pingpong[i].x = rand() % 45;
@@ -482,6 +484,7 @@ void main(int argc, char *argv[]) {
 	glutReshapeFunc(Reshape);
 	glutMouseFunc(Mouse);
 	glutKeyboardFunc(Keyboard);
+	glutSpecialFunc(SpecialKeys);
 	glutTimerFunc(100, Timerfunction, 1);
 	srand(time(NULL));
 	glutMainLoop();
@@ -913,6 +916,8 @@ GLvoid DrawAirplane(GLvoid)
 	glPopMatrix();
 }
 
+static int roboRad = 0;
+
 GLvoid drawScene(GLvoid)
 {
 	glFrontFace(GL_CW);
@@ -977,9 +982,12 @@ GLvoid drawScene(GLvoid)
 
 		glPushMatrix();
 		glTranslatef(robot.x, robot.y, robot.z);
+		glRotatef(seeDir, 0, 1, 0);
 		//로봇 그리기 장소
 		RobotHead();
 		RobotMiddle();
+		RobotLeg(roboRad);
+		RobotHand(roboRad);
 		glPopMatrix();
 
 		glPushMatrix();//-------------그리기 입력--------------------------
@@ -1161,6 +1169,10 @@ BOOL xBool = FALSE;
 BOOL yBool = FALSE;
 BOOL zBool = FALSE;
 
+static BOOL roboR = FALSE;
+
+static BOOL jump = FALSE;
+static BOOL down = FALSE;
 void Timerfunction(int value) {
 
 	glutPostRedisplay(); //타이머에 넣는다.4
@@ -1250,6 +1262,18 @@ void Timerfunction(int value) {
 			zBool = FALSE;
 	}
 
+	if (roboR == FALSE) {
+		roboRad += 1;
+		if (roboRad >= 20)
+			roboR = TRUE;
+	}
+
+	else if (roboR == TRUE) {
+		roboRad -= 1;
+		if (roboRad <= -20)
+			roboR = FALSE;
+	}
+
 
 	if (!DiX) {
 		LoX += 2;
@@ -1323,6 +1347,22 @@ void Timerfunction(int value) {
 			openFront += 1;
 	}
 
+	if (jump == TRUE) {
+		if (down == FALSE) {
+			robot.y += 2;
+			if (robot.y >= 150)
+				down = TRUE;
+		}
+
+		else if (down == TRUE) {
+			robot.y -= 2;
+			if (robot.y <= 50) {
+				down = FALSE;
+				jump = FALSE;
+			}
+		}
+	}
+
 
 	glutTimerFunc(10, Timerfunction, 1); //타이머 다시 출력
 }
@@ -1332,6 +1372,10 @@ int ani_count;
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
+	case ' ':
+		if(jump == FALSE)
+			jump = TRUE;
+		break;
 		//---------카메라
 		//rotate
 	case 'x':
@@ -1450,6 +1494,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		;
 		break;
 	}
+
 	glutPostRedisplay();
 
 }
@@ -1476,6 +1521,58 @@ GLvoid Reshape(int w, int h)
 		//glRotatef(-60, 1, 0, 0);
 
 	}
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+
+void SpecialKeys(int key, int x, int y) {
+	if (key == GLUT_KEY_UP) {
+		if(robot.z > -180)
+			robot.z -= 1;
+		if (robot.z < -110 && robot.x > 130)
+			robot.z += 1;
+		if (robot.x < -110 && robot.z < -110)
+			robot.z += 1;
+
+		seeDir = 0;
+		printf("(x : %f, z : %f) \n", robot.x, robot.z);
+	}
+
+	if (key == GLUT_KEY_DOWN) {
+		if(robot.z < 180)
+			robot.z += 1;
+		if (robot.z > 126 && robot.x < -110)
+			robot.z -= 1;
+		if (robot.x > 130 && robot.z > 140)
+			robot.z -= 1;
+
+		seeDir = 180;
+		printf("(x : %f, z : %f) \n", robot.x, robot.z);
+	}
+
+	if (key == GLUT_KEY_LEFT) {
+		if(robot.x > -180)
+			robot.x -= 1;
+		if (robot.z > 126 && robot.x < -110)
+			robot.x += 1;
+		if (robot.x < -110 && robot.z < -110)
+			robot.x += 1;
+
+		seeDir = 270;
+		printf("(x : %f, z : %f) \n", robot.x, robot.z);
+	}
+
+	if (key == GLUT_KEY_RIGHT) {
+		if(robot.x < 180)
+			robot.x += 1;
+		if (robot.x > 130 && robot.z > 140)
+			robot.x -= 1;
+		if (robot.z < -110 && robot.x > 130)
+			robot.x -= 1;
+
+		seeDir = 90;
+		printf("(x : %f, z : %f) \n", robot.x, robot.z);
+	}
+	glutPostRedisplay();
 }
