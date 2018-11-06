@@ -29,6 +29,7 @@ void Keyboard(unsigned char key, int x, int y);
 BOOL Keyboard_Act_On; //키보드 활성화 여부
 
 				 //색 선정
+static int BallDir = 0;
 
 struct DOUBLE_3D_POS
 {
@@ -118,6 +119,25 @@ typedef struct BoOL
 #define DEGTORAD pi/180
 #define pointArrSize 20
 #define ShapeSize 15
+
+#define pi 3.14
+//#define DEGTORAD pi/360 * 2
+#define DEGTORAD pi/180
+#define pointArrSize 20
+#define ShapeSize 15
+
+double angle;
+int direction;
+int LoAdder;
+int LoA = 0;
+int LoX = 0;
+int MidXA = 0;
+int MidYA = 0;
+int TopXA = 0;
+int TopZA = 0;
+int nPoint = 0;
+int Point[pointArrSize][2] = { 0 }; // Shape 위치 지정
+static bool DiX = false;
 typedef struct Shape
 {
 	Color cl;//색상
@@ -175,7 +195,13 @@ BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 
+typedef struct Three {
+	float size;
+	float x;
+	float y;
+};
 
+static Three sq[3];
 //카메라-----------------
 Translate_pos EYE;
 Translate_pos AT;
@@ -303,26 +329,31 @@ GLvoid MultiMatrix(GLdouble y[16]) {
 
 GLvoid MultiMatrix2(GLdouble y[16]) {
 	for (int i = 0; i < 16; i++) {
-		result2[i] = 0;
+		result[i] = 0;
 	}
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			result2[j + i * 4] = Identity2[0 + i * 4] * y[0 + j] +
-				Identity2[1 + i * 4] * y[4 + j] +
-				Identity2[2 + i * 4] * y[8 + j] +
-				Identity2[3 + i * 4] * y[12 + j];
+			result[j + i * 4] = Identity[0 + i * 4] * y[0 + j] +
+				Identity[1 + i * 4] * y[4 + j] +
+				Identity[2 + i * 4] * y[8 + j] +
+				Identity[3 + i * 4] * y[12 + j];
 		}
 	}
 
 	for (int i = 0; i < 16; i++) {
-		Identity2[i] = result2[i];
+		Identity[i] = result[i];
 	}
 }
 
+struct point {
+	float x;
+	float y;
+};
 
 QUAD index;
-
+static BOOL change = FALSE;
+static BOOL airDir = FALSE;
 //은면제거
 BOOL depth;
 int depth_count;
@@ -332,7 +363,7 @@ int culling_count;
 //쉐이딩
 BOOL shade;
 int shade_count;
-
+static point PlanePosition[360];
 void SetupRC()
 {
 	for (int i = 0; i < 10; ++i) {
@@ -345,7 +376,7 @@ void SetupRC()
 		else
 			pingpong[i].xBool = TRUE;
 
-		if(rand() % 2 == 0)
+		if (rand() % 2 == 0)
 			pingpong[i].yBool = FALSE;
 		else
 			pingpong[i].yBool = TRUE;
@@ -357,8 +388,10 @@ void SetupRC()
 		box[i].z = (2 - i) * (-10);
 	}
 	//초기화
+	camera.moveEye(0, 0, -150);
+	camera.moveEye(0, 50, 0);
+	camera.rotateEye(0, 20, 0);
 	spherePos.y = 0;
-	spherePos.z = 0;
 	glTranslated(WideSize / 2, HighSize / 2, Z_Size / 2);
 }
 void main(int argc, char *argv[]) {
@@ -468,32 +501,415 @@ GLvoid DrawBall()
 
 }
 
-GLvoid DrawSmallBox()
+
+GLvoid Draw_Low()
 {
 	glPushMatrix();
-	glTranslatef(box[0].x, box[0].y, box[0].z);
-	glutSolidCube(3);
+	{
+		glColor4f(1.0f, 0.7f, 0.1f, 1.0f);
+		glScaled(1.5, 0.25, 1.0);
+		glutSolidCube(ShapeSize * 2);
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glutWireCube(ShapeSize * 2);
+	}
 	glPopMatrix();
 }
 
-GLvoid DrawMiddleBox()
+GLvoid Draw_Top()
 {
 	glPushMatrix();
-	glTranslatef(box[1].x, box[1].y, box[1].z);
-	glutSolidCube(6);
+	{
+		glColor4f(0.1f, 1.0f, 0.1f, 1.0f);
+		glPushMatrix();
+		glRotated(TopXA, 1.0, 0.0, 0.0);
+		glRotated(TopZA, 0.0, 0.0, 1.0);
+		glScaled(1.0, 4.0, 1.0);
+		glTranslated(0.0, ShapeSize / 4, 0.0);
+		glutSolidCube(ShapeSize / 2);
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glutWireCube(ShapeSize / 2);
+
+		glPopMatrix();
+	}
+	glPopMatrix();
+}
+
+GLvoid Draw_Mid()
+{
+	glPushMatrix();
+	glColor4f(1.0f, 0.1f, 0.1f, 1.0f);
+	glRotated(MidYA, 0.0, 1.0, 0.0);
+	glRotated(MidXA, 1.0, 0.0, 0.0);
+	glTranslated(0.0, ShapeSize, 0.0);
+	glPushMatrix();
+	glScaled(1.0, 4.0, 1.0);
+
+	glutSolidCube(ShapeSize / 2);
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glutWireCube(ShapeSize / 2);
+
+	glPopMatrix();
+
+	glTranslated(0.0, ShapeSize, 0.0);
+	Draw_Top();
 	glPopMatrix();
 }
 
 
-GLvoid DrawBigBox()
+GLvoid drawPlan(GLvoid)
+{
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	{
+		glPushMatrix();
+		//	glRotatef(30, 1, 0, 0);
+		glScalef(1, 0.01, 1);
+		glutSolidCube(400);
+		glPopMatrix();
+	}
+}
+
+static int ballRad = 0;
+GLvoid Ball(GLvoid)
 {
 	glPushMatrix();
-	glTranslatef(box[2].x, box[2].y, box[2].z);
-	glutSolidCube(10);
+	{
+		glTranslatef(0, 0, 0);
+		glRotatef(ballRad, 1, 0, 0);
+	}
 	glPopMatrix();
 }
 
-static int zRad = 1;
+static int running = 0;
+static int leg = 0;
+GLvoid Running(GLvoid)
+{
+	{
+		glColor3f(0.5f, 0.7f, 0.5f);
+		glBegin(GL_TRIANGLES);
+		glVertex3f(-200, 3, 0);
+		glVertex3f(-200, 3, 200);
+		glVertex3f(0, 3, 200);
+		glEnd();
+	}
+
+	glColor3f(0.1f, 0.1f, 0.9f);
+	glPushMatrix();
+	{
+		glTranslatef(-170, 20, 170);
+		glScalef(1, 0.2, 1);
+		glRotatef(-running, 0, 0, 1);
+		glutWireTorus(20, 30, 20, 20);
+
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslated(-170, 30, 165);
+		glTranslated(0, 30, 0);
+		glScalef(0.2, 1, 1);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslated(-170, 40, 170);
+		glTranslated(0, 20, 0);
+		glRotatef(leg, 0, 0, 1);
+		glTranslatef(0, -20, 0);
+		glScalef(0.2, 1, 0.2);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslated(-170, 40, 160);
+		glTranslated(0, 20, 0);
+		glRotatef(-leg, 0, 0, 1);
+		glTranslatef(0, -20, 0);
+		glScalef(0.2, 1, 0.2);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+}
+
+GLvoid Tree(int size)
+{
+	glPushMatrix();
+	{
+		glColor3f(0.5f, 0.5f, 0.5f);
+		glBegin(GL_TRIANGLES);
+		glVertex3f(200, 3, 0);
+		glVertex3f(200, 3, 200);
+		glVertex3f(0, 3, 200);
+		glEnd();
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glColor3f(0.9f, 0.5f, 0.0f);
+		glTranslatef(160, 50, 170);
+		glScalef(0.2, 1, 0.2);
+		glutSolidCube(100);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+
+		glTranslatef(160, 50, 170);
+		glTranslatef(0, 50, 0);
+		glColor3f(0.0f, 1.0f, 0.4f);
+		glutWireSphere(size, 20, 20);
+	}
+	glPopMatrix();
+}
+
+static int hand = 0;
+static int updownSize = 0;
+GLvoid UpDown(GLvoid)
+{
+	glColor3f(0.5f, 0.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex3f(200, 3, 0);
+	glVertex3f(200, 3, -200);
+	glVertex3f(0, 3, -200);
+	glEnd();
+
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glPushMatrix();
+	{
+		glTranslatef(170, 10, -165);
+		glScalef(1, 0.4, 0.4);
+		glutSolidCube(40);
+
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(170, 37 + updownSize, -170);
+		glTranslated(0, 20, 0);
+		glRotatef(hand, 1, 0, 0);
+		glTranslatef(0, -10, 0);
+		glScalef(0.2, 1, 0.2);
+		glutSolidCube(20);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(170, 37, -170);
+		glTranslatef(0, -20, 0);
+		glRotatef(-hand, 1, 0, 0);
+		glScalef(0.2, 1, 0.2);
+		glTranslatef(0, 10, 0);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(170, 37 + updownSize, -160);
+		glTranslated(0, 20, 0);
+		glRotatef(-hand, 1, 0, 0);
+		glTranslatef(0, -10, 0);
+		glScalef(0.2, 1, 0.2);
+		glutSolidCube(20);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(170, 37, -160);
+		glTranslatef(0, -20, 0);
+		glRotatef(hand, 1, 0, 0);
+		glScalef(0.2, 1, 0.2);
+		glTranslatef(0, 10, 0);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glColor3f(1.0f, 0.0f, 0.0);
+		glTranslatef(170, 57 + updownSize, -185);
+		glRotatef(90, 0, 0, 1);
+		glutWireCylinder(1, 40, 20, 20);
+
+		glTranslatef(0, 0, 40);
+		glutSolidCylinder(20, 10, 20, 20);
+
+		glTranslatef(0, 0, -50);
+		glutSolidCylinder(20, 10, 20, 20);
+	}
+	glPopMatrix();
+}
+
+GLvoid rotatePeople(GLvoid)
+{
+
+	glColor3f(1.0f, 0.5f, 0.3f);
+	glBegin(GL_TRIANGLES);
+	glVertex3f(-200, 3, 0);
+	glVertex3f(-200, 3, -200);
+	glVertex3f(0, 3, -200);
+	glEnd();
+
+	glColor3f(1.0f, 0.0f, 1.0f);
+	glPushMatrix();
+	{
+		glTranslatef(-170, 50, -170);
+		glRotatef(90, 1, 0, 0);
+		glutSolidCylinder(2, 50, 50, 50);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(-170, 50, -130);
+		glRotatef(90, 1, 0, 0);
+		glutSolidCylinder(2, 50, 50, 50);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glTranslatef(-170, 50, -175);
+		glutSolidCylinder(2, 50, 50, 50);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	{
+		glColor3f(0.5f, 0.5f, 0.3f);
+		glTranslatef(-170, 50, -150);
+		glRotatef(running, 0, 0, 1);
+		glTranslatef(0, -10, 0);
+		glutSolidSphere(10, 10, 10);
+
+		glColor3f(1.0f, 1.0f, 0.0f);
+		glTranslatef(0, -20, 0);
+		glScalef(0.2, 0.7, 1);
+		glutSolidCube(40);
+
+		glScalef(1, 1, 1);
+
+		glScalef(0.3f, 1, 0.3f);
+		glTranslatef(0, 30, 50);
+		glutSolidCube(20);
+
+		glTranslatef(0, 0, -100);
+		glutSolidCube(20);
+	}
+	glPopMatrix();
+
+}
+
+GLvoid DrawSphere()
+{
+	glPushMatrix();
+
+	//Move
+	glTranslatef(spherePos.x, spherePos.y + 20, spherePos.z);
+	//Rotation 행렬 곱해주기.
+	glMultMatrixd(Identity);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glutWireSphere(20, 20, 20);
+
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glutSolidSphere(20, 10, 10);
+	glPopMatrix();
+}
+static int rad;
+static int TreeSize = 30;
+static int airRad = 0;
+static int nowPosition = 0;
+GLvoid DrawAirplane(GLvoid)
+{
+	glPushMatrix();
+	{
+		glTranslatef(PlanePosition[nowPosition].x, 0, PlanePosition[nowPosition].y);
+		glTranslatef(-10, 0, 0);
+		glRotatef(-nowPosition, 0, 1, 0);
+		glTranslatef(10, 0, 0);
+
+		glPushMatrix();
+		if (airDir == FALSE)
+			glRotatef(90, 0, 1, 0);
+		else if (airDir == TRUE)
+			glRotatef(270, 0, 1, 0);
+
+		glPushMatrix();
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glTranslatef(0, 100, 0);
+		glScalef(0.3, 0.1, 1);
+		glutSolidCube(40);
+		glTranslatef(0, 200, 0);
+		glutSolidCube(40);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(0.0f, 0.7f, 0.5f);
+		glTranslatef(0, 110, 10);
+		glScalef(0.05f, 0.1f, 0.025f);
+		glutSolidCube(150);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(0.0f, 0.7f, 0.5f);
+		glTranslatef(0, 110, -10);
+		glScalef(0.05f, 0.1f, 0.025f);
+		glutSolidCube(150);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(1.0f, 0.7f, 0.5f);
+		glTranslatef(-20, 110, 0);
+		glScalef(1, 0.2, 0.2);
+		glutSolidSphere(40, 40, 40);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glTranslatef(-40, 110, 0);
+		glScalef(0.3, 0.1, 1);
+		glutSolidCube(50);
+		glPopMatrix();
+
+		glPushMatrix();
+		glColor3f(1.0f, 1.0f, 0.0f);
+		glTranslatef(20, 110, 0);
+		glRotatef(airRad, 1, 0, 0);
+		glScalef(0.05f, 0.05f, 0.9f);
+		glutSolidCube(20);
+		glPopMatrix();
+
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glPushMatrix();
+		glTranslatef(-65, 110, 0);
+		glTranslatef(-sq[0].x, 0, 0);
+		glutSolidSphere(sq[0].size, sq[0].size, sq[0].size);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(-65, 110, 0);
+		glTranslatef(-sq[1].x, 0, 0);
+		glutSolidSphere(sq[1].size, sq[1].size, sq[1].size);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(-65, 110, 0);
+		glTranslatef(-sq[2].x, 0, 0);
+		glutSolidSphere(sq[2].size, sq[2].size, sq[2].size);
+		glPopMatrix();
+
+
+		glPopMatrix();
+	}
+	glPopMatrix();
+}
 
 GLvoid drawScene(GLvoid)
 {
@@ -519,20 +935,49 @@ GLvoid drawScene(GLvoid)
 		glDisable(GL_CULL_FACE);
 	}
 
-	
+
 
 	glPushMatrix();//-----------------------------------
 	{
 		camera.drawCamera();
+		glPushMatrix();
 
-		glRotated(zRad, 0, 0, 1);
+		glPushMatrix();
+		{
+			drawPlan();
 
+			//=====구르는 공======
+			DrawSphere();
+
+			//=====크 레 인=====
+			glPushMatrix();
+			glTranslated(LoX, 5, 0);
+			glRotated(LoA, 0.0, 1.0, 0.0);
+			Draw_Low();
+			Draw_Mid();
+			glPopMatrix();
+			//=====레몬트리======
+			Tree(TreeSize);
+
+			//=====런닝머신=====
+			Running();
+
+			//=====업다운머신=====
+			UpDown();
+
+			//=====철봉도는놈=====
+			rotatePeople();
+
+			//=====비행기=====
+			DrawAirplane();
+		}
+		glPopMatrix();
 
 		glPushMatrix();//-------------그리기 입력--------------------------
 		{
-			glTranslated(0, 0, 0);
+			glTranslated(0, 100, 0);
 			glPushMatrix(); {
-				glScaled(50, 50, 50);
+				glScaled(240, 100, 240);
 
 				if (shade) {
 					glShadeModel(GL_SMOOTH);
@@ -544,7 +989,7 @@ GLvoid drawScene(GLvoid)
 
 				glBegin(GL_POLYGON); {//아래
 
-					
+
 					glColor3f(index.cl[1].R, index.cl[1].G, index.cl[1].B);
 					glVertex3f(index.pos[1].x, index.pos[1].y, index.pos[1].z);//Yellow
 
@@ -659,16 +1104,9 @@ GLvoid drawScene(GLvoid)
 			}
 			glPopMatrix();//상자 그리기 끝
 			glColor3f(0.0f, 0.0f, 0.0f);
-			DrawBall();
-
-			glColor3f(0.5f, 0.5f, 1.0f);
-			DrawSmallBox();
-			glColor3f(1.5f, 0.5f, 1.0f);
-			DrawMiddleBox();
-			glColor3f(0.7f, 0.5f, 1.0f);
-			DrawBigBox();
 			glPopMatrix();
 		}
+		glPopMatrix();
 		glPopMatrix();
 	}
 	glPopMatrix();
@@ -697,13 +1135,7 @@ void Mouse(int button, int state, int x, int y) {
 
 void Motion(int x, int y)
 {
-	endX = x;
-	endY = y;
 
-	if (endX > startX)
-		dir = 1;
-	else if (endX < startX)
-		dir = 2;
 }
 
 
@@ -711,195 +1143,178 @@ void Motion(int x, int y)
 static BOOL openU = FALSE;
 static BOOL openF = FALSE;
 
-static BOOL xBool = FALSE;
-static BOOL yBool = FALSE;
-static int Boxdir = 1;
-static int checkRad = 90;
+
+BOOL legBool = FALSE;
+BOOL TreeBool = FALSE;
+BOOL handBool = FALSE;
+
+BOOL xBool = FALSE;
+BOOL yBool = FALSE;
+BOOL zBool = FALSE;
 
 void Timerfunction(int value) {
 
 	glutPostRedisplay(); //타이머에 넣는다.4
+	if (handBool == FALSE) {
+		hand += 5;
+		updownSize -= 2;
+		if (hand == 15)
+			handBool = TRUE;
+	}
+	else if (handBool == TRUE) {
+		hand -= 5;
+		updownSize += 2;
+		if (hand == 0)
+			handBool = FALSE;
+	}
 
+	if (legBool == FALSE) {
+		leg += 5;
+		if (leg == 15)
+			legBool = TRUE;
+	}
+	else if (legBool == TRUE) {
+		leg -= 5;
+		if (leg == -15)
+			legBool = FALSE;
+	}
+
+	running = (running + 1) % 360;
+	if (TreeBool == FALSE) {
+		TreeSize += 1;
+		if (TreeSize == 40)
+			TreeBool = TRUE;
+	}
+	else {
+		TreeSize -= 1;
+		if (TreeSize == 20)
+			TreeBool = FALSE;
+	}
+
+	if (xBool == FALSE && BallDir == 1) {
+		spherePos.x += 1;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10)) {
+			xBool = TRUE;
+			spherePos.x -= 3;
+		}
+		//sphereAngle.z -= 3;
+		MultiMatrix(rotateZ_P3);
+		if (spherePos.x == 100)
+			xBool = TRUE;
+	}
+	else if (xBool == TRUE && BallDir == 1) {
+		spherePos.x -= 1;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10)) {
+			xBool = FALSE;
+			spherePos.x += 3;
+		}
+		//sphereAngle.z -= 3;
+		MultiMatrix(rotateZ_M3);
+		if (spherePos.x == -100)
+			xBool = FALSE;
+	}
+
+	if (zBool == FALSE && BallDir == 2) {
+		spherePos.z += 1;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10)) {
+			zBool = TRUE;
+			spherePos.z -= 3;
+		}
+		//sphereAngle.x += 3;
+		MultiMatrix(rotateX_M3);
+		if (spherePos.z == 100)
+			zBool = TRUE;
+	}
+	else if (zBool == TRUE && BallDir == 2) {
+		spherePos.z -= 1;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10)) {
+			zBool = FALSE;
+			spherePos.z += 3;
+		}
+		//sphereAngle.z += 3;
+		MultiMatrix(rotateX_P3);
+		if (spherePos.z == -100)
+			zBool = FALSE;
+	}
+
+
+	if (!DiX) {
+		LoX += 2;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10))
+			DiX = !DiX;
+	}
+	else {
+		LoX -= 2;
+		if ((LoX - 15 < spherePos.x + 10) && (0 - 15 < spherePos.z + 10)
+			&& (LoX + 15 > spherePos.x - 10) && (0 + 15 > spherePos.z - 10))
+			DiX = !DiX;
+	}
+	if (LoX > 50)	DiX = !DiX;
+	else if (LoX < -50)	DiX = !DiX;
+
+	/* Low Angle Control*/
+	if (LoA > 360)	LoA = 0;
+	else if (LoA < 0)	LoA = 360;
+	LoA += LoAdder;
+
+	airRad = (airRad + 20) % 360;
+
+	//nowPosition = (nowPosition + 1) % 360;
+	if (airDir == FALSE) {
+		nowPosition -= 1;
+		if (nowPosition < 0)
+			nowPosition = 359;
+	}
+
+	else if (airDir == TRUE) {
+		nowPosition += 1;
+		if (nowPosition > 359)
+			nowPosition = 0;
+	}
+
+
+	for (int i = 0; i < 3; ++i) {
+		sq[i].size -= 0.3;
+		sq[i].x += 1;
+
+		if (sq[i].size <= 0) {
+			sq[i].x = 5;
+			sq[i].size = 9;
+		}
+	}
 	if (openU == FALSE) {
-		if (openUP > 0 && spherePos2.y == 0)
+		if (openUP > 0)
 			openUP -= 1;
 		else {
-			if (spherePos2.y > 0) {
-				spherePos2.y -= 1;
 				srad -= 2;
 				MultiMatrix2(rotateX_P3);
-			}
 		}
 	}
 	else if (openU == TRUE) {
 		if (openUP < 90)
 			openUP += 1;
 		else {
-			if (spherePos2.y < 150) {
-				spherePos2.y += 1;
-				srad += 2;
-				MultiMatrix2(rotateX_M3);
-			}
+			srad += 2;
+			MultiMatrix2(rotateX_M3);
 		}
 	}
 
 	if (openF == FALSE) {
 		if (openFront > 0)
 			openFront -= 1;
-		else {
-			if (spherePos.z > 75) {
-				spherePos.z -= 1;
-
-				MultiMatrix(rotateX_P3);
-			}
-		}
 	}
 
 	else if (openF == TRUE) {
 		if (openFront < 90)
 			openFront += 1;
-		else {
-			if (spherePos.z < 260) {
-				spherePos.z += 1;
-				MultiMatrix(rotateX_M3);
-			}
-		}
 	}
 
 
-	for (int i = 0; i < 10; ++i) {
-		if (pingpong[i].xBool == FALSE) {
-			pingpong[i].x += 1;
-			if (pingpong[i].x > 40)
-				pingpong[i].xBool = TRUE;
-		}
-		else if (pingpong[i].xBool == TRUE) {
-			pingpong[i].x -= 1;
-			if (pingpong[i].x < -40)
-				pingpong[i].xBool = FALSE;
-		}
-
-		if (pingpong[i].yBool == FALSE) {
-			pingpong[i].y += 1;
-			if (pingpong[i].y > 40)
-				pingpong[i].yBool = TRUE;
-		}
-
-		else if (pingpong[i].yBool == TRUE) {
-			pingpong[i].y -= 1;
-			if (pingpong[i].y < -40)
-				pingpong[i].yBool = FALSE;
-		}
-	}
-
-
-//====================================================================================================
-	if (dir == 1) {
-		if (left == TRUE) {
-			zRad = (zRad + 1) % 360;
-			checkRad = checkRad + 1;
-			if (checkRad >= 180) {
-				Boxdir += 1;
-				if (Boxdir == 5)
-					Boxdir = 1;
-				checkRad = 90;
-			}
-		}
-
-		if (Boxdir == 1) {
-			if (checkRad > 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].x > -45)
-						box[i].x -= 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 2) {
-			if (checkRad > 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].y < 45)
-						box[i].y += 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 3) {
-			if (checkRad > 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].x < 45)
-						box[i].x += 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 4) {
-			if (checkRad > 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].y > -45)
-						box[i].y -= 1;
-				}
-			}
-		}
-	}
-
-	else if (dir == 2) {
-		if (left == TRUE) {
-			zRad -= 1;
-			if (zRad <= 0)
-				zRad = 360;
-
-			checkRad = checkRad - 1;
-			if (checkRad <= 0) {
-				Boxdir -= 1;
-				checkRad = 90;
-				if (Boxdir == 0)
-					Boxdir = 4;
-			}
-		}
-
-		if (Boxdir == 1) {
-			if (checkRad < 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].x < 45)
-						box[i].x += 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 2) {
-			if (checkRad < 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].y > -45)
-						box[i].y -= 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 3) {
-			if (checkRad < 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].x > -45)
-						box[i].x -= 1;
-				}
-			}
-		}
-
-		else if (Boxdir == 4) {
-			if (checkRad < 90) {
-				for (int i = 0; i < 3; ++i) {
-					if (box[i].y < 45)
-						box[i].y += 1;
-				}
-			}
-		}
-	}
-
-
-
-
-
-	
 	glutTimerFunc(10, Timerfunction, 1); //타이머 다시 출력
 }
 
@@ -974,19 +1389,16 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		//-----------카메라 끝 --------
 
-	case '2'://직각투영 유무
-		ani_count++;
-		if (ani_count % 2 == 1) {
-			ani = TRUE;//회전하는거 트루로
-			Reshape(WideSize, HighSize);
-		}
-		else {
-			ani = FALSE;//회전하는거 트루로
-			Reshape(WideSize, HighSize);
-		}
+		//------------투영 끝
+
+	case '1':
+		BallDir = 1;
 		break;
 
-		//------------투영 끝
+	case '2':
+		BallDir = 2;
+		break;
+
 
 	case '6'://은면제거
 		depth_count++;
