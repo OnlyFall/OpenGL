@@ -2,6 +2,8 @@
 #include <random>
 #include <time.h>
 #include <math.h>
+#include "Robot.h"
+
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -971,6 +973,13 @@ GLvoid drawScene(GLvoid)
 			//=====비행기=====
 			DrawAirplane();
 		}
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(robot.x, robot.y, robot.z);
+		//로봇 그리기 장소
+		RobotHead();
+		RobotMiddle();
 		glPopMatrix();
 
 		glPushMatrix();//-------------그리기 입력--------------------------
