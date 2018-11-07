@@ -279,6 +279,7 @@ GLvoid DrawSphere()
 }
 
 
+static BOOL on = FALSE;
 static BOOL check = FALSE;
 GLvoid drawScene(GLvoid)
 {
@@ -298,7 +299,10 @@ GLvoid drawScene(GLvoid)
 	glEnable(GL_MAP2_VERTEX_3);
 
 	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
-	glEvalMesh2(GL_FILL, 0, 10, 0, 10);
+	if (on == FALSE)
+		glEvalMesh2(GL_FILL, 0, 10, 0, 10);
+	else
+		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
 	glDisable(GL_MAP2_VERTEX_3);
 
 	drawPyramid(-150, -150);
@@ -398,6 +402,14 @@ void Keyboard(unsigned char key, int x, int y)
 	case 'r':
 	case 'R':
 		reset();
+		break;
+
+	case 't':
+	case 'T':
+		if (on == FALSE)
+			on = TRUE;
+		else
+			on = FALSE;
 		break;
 
 	case 'x':
