@@ -9,7 +9,10 @@ void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
+void SpecialKeys(int key, int x, int y);
 static int mode = 2;
+
+static int select = -100;
 
 
 GLfloat ctrlpoints[10][3][3] = { 0, 0, 0 };
@@ -43,7 +46,7 @@ public:
 		m_Center = { 0.0, 0.0, -100.0 };
 		m_Up = { 0.0, 1.0, 0.0 };
 		m_MoveEye = { 0.0, 0.0, 0.0 };
-		m_Angle = { 0.0, 90.0, 0.0 };
+		m_Angle = { 0.0, 0.0, 0.0 };
 	}
 
 	void drawCamera() // 카메라를 배치하는 함수
@@ -105,6 +108,7 @@ void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백 함수
 	glutKeyboardFunc(Keyboard); // 키보드 입력 콜백 함수
 	glutTimerFunc(100, TimerFunction, 1); // 타이머 콜백 함수
+	glutSpecialFunc(SpecialKeys);
 	glutMainLoop(); // 이벤트 루프 실행하기
 }
 
@@ -121,12 +125,49 @@ GLvoid drawScene(GLvoid)
 	camera.drawCamera();
 
 	if (check == TRUE) {
-		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 10, 3, 0.0, 1.0, 30, 3, &ctrlpoints[0][0][0]);
+		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[0][0][0]);
 		glEnable(GL_MAP2_VERTEX_3);
 		// 그리드를 이용한 곡면 드로잉 
 		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
 		// 선을 이용하여 그리드 연결
 		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
+		glDisable(GL_MAP2_VERTEX_3);
+
+		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[2][0][0]);
+		glEnable(GL_MAP2_VERTEX_3);
+		// 그리드를 이용한 곡면 드로잉 
+		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+		// 선을 이용하여 그리드 연결
+		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
+		glDisable(GL_MAP2_VERTEX_3);
+
+		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[4][0][0]);
+		glEnable(GL_MAP2_VERTEX_3);
+		// 그리드를 이용한 곡면 드로잉 
+		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+		// 선을 이용하여 그리드 연결
+		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
+		glDisable(GL_MAP2_VERTEX_3);
+
+		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[6][0][0]);
+		glEnable(GL_MAP2_VERTEX_3);
+		// 그리드를 이용한 곡면 드로잉 
+		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+		// 선을 이용하여 그리드 연결
+		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
+		glDisable(GL_MAP2_VERTEX_3);
+
+		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[7][0][0]);
+		glEnable(GL_MAP2_VERTEX_3);
+		// 그리드를 이용한 곡면 드로잉 
+		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+		// 선을 이용하여 그리드 연결
+		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
 		glDisable(GL_MAP2_VERTEX_3);
 	}
 	
@@ -176,10 +217,24 @@ void TimerFunction(int value)
 
 	glutTimerFunc(1, TimerFunction, 1);
 }
+static BOOL plusDir = FALSE;
+static int opic = 0;
 
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+
+	case 'c':
+		if (plusDir == FALSE)
+			plusDir = TRUE;
+		else
+			plusDir = FALSE;
+		break;
+
+	case 'n':
+		opic = (opic + 1) % 3;
+		break;
+
 	case 'k':
 		if (mode == 1) {
 			mode = 2;
@@ -260,7 +315,7 @@ void Mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		if (check == FALSE) {
-			if (count <= 12) {
+			if (count < 12) {
 				if (swi == 0) {
 					ctrlpoints[count][0][0] = x - 400;
 					ctrlpoints[count][0][1] = 0;
@@ -308,6 +363,99 @@ void Mouse(int button, int state, int x, int y)
 			}
 		}
 
+	}
+	glutPostRedisplay();
+}
+
+void SpecialKeys(int key, int x, int y) {
+	if (key == GLUT_KEY_F1) {
+		select = 1;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F2) {
+		select = 2;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F3) {
+		select = 3;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F4) {
+		select = 4;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F5) {
+		select = 5;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F6) {
+		select = 6;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F7) {
+		select = 7;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F8) {
+		select = 8;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F9) {
+		select = 9;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
+	}
+
+	if (key == GLUT_KEY_F10) {
+		select = 0;
+		if (plusDir == FALSE) {
+			ctrlpoints[select][opic][1] += 1;
+		}
+		else
+			ctrlpoints[select][opic][1] -= 1;
 	}
 	glutPostRedisplay();
 }
