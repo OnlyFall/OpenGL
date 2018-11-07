@@ -8,9 +8,9 @@ void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
+void Motion(int x, int y);
 
 static int count = 0;
-static BOOL check = FALSE;
 struct position {
 	int x;
 	int y;
@@ -27,8 +27,15 @@ struct position {
 
 static position ControllPoint[20];
 GLfloat ctrlpoints[20][3];
-
-
+static int crash = -1;
+static BOOL left = FALSE;
+static BOOL checki = FALSE;
+void clear()
+{
+	checki = FALSE;
+	count = 0;
+}
+static BOOL check = FALSE;
 static int temp = 0;
 void main(int argc, char *argv[])
 {
@@ -41,6 +48,7 @@ void main(int argc, char *argv[])
 	glutCreateWindow("Example2"); // 윈도우 생성 (윈도우 이름)
 	glutDisplayFunc(drawScene); // 출력 함수의 지정 
 	glutKeyboardFunc(Keyboard);
+	glutMotionFunc(Motion);
 	glutMouseFunc(Mouse);
 	glutTimerFunc(1, TimerFunction, 1);
 	glutReshapeFunc(Reshape);
@@ -111,6 +119,11 @@ void Keyboard(unsigned char key, int x, int y)
 			dir = 1;
 		break;
 
+	case 'r':
+	case 'R':
+		clear();
+		break;
+
 	case 'q':
 		PostQuitMessage(0);
 		break;
@@ -121,16 +134,42 @@ void Keyboard(unsigned char key, int x, int y)
 
 void Mouse(int button, int state, int x, int y)
 {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		ControllPoint[count].x = x;
-		ControllPoint[count].y = 600 - 1 - y;
-		ctrlpoints[count][0] = x;
-		ctrlpoints[count][1] = 600 - 1 - y;
-		ctrlpoints[count][2] = 0.0;
-		if (count < 20)
-			count++;
-		else
-			count = 0;
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ) {
+		if (checki == FALSE) {
+			ControllPoint[count].x = x;
+			ControllPoint[count].y = 600 - 1 - y;
+			ctrlpoints[count][0] = x;
+			ctrlpoints[count][1] = 600 - 1 - y;
+			ctrlpoints[count][2] = 0.0;
+			if (count < 20)
+				count++;
+			else
+				count = 0;
+		}
+		else {
+			for (int i = 0; i < count; ++i) {
+				if (x > ctrlpoints[i][0] - 10 && x < ctrlpoints[i][0] + 10 && (600 - 1 - y) > ctrlpoints[i][1] - 10 && (600 - 1 - y) < ctrlpoints[i][1] + 10)
+					crash = i;
+			}
+		}
+		left = TRUE;
+	}
+
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+		checki = TRUE;
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		left = FALSE;
+		crash = -1;
+	}
+	glutPostRedisplay();
+}
+
+void Motion(int x, int y)
+{
+	if (left == TRUE && checki == TRUE) {
+		ctrlpoints[crash][0] = x;
+		ctrlpoints[crash][1] = 600 - 1 - y;
 	}
 	glutPostRedisplay();
 }

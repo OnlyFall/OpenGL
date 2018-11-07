@@ -9,7 +9,7 @@ void TimerFunction(int value);
 void Keyboard(unsigned char key, int x, int y);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
-static int mode = 1;
+static int mode = 2;
 
 
 GLfloat ctrlpoints[10][3][3] = { 0, 0, 0 };
@@ -43,7 +43,7 @@ public:
 		m_Center = { 0.0, 0.0, -100.0 };
 		m_Up = { 0.0, 1.0, 0.0 };
 		m_MoveEye = { 0.0, 0.0, 0.0 };
-		m_Angle = { 0.0, 0.0, 0.0 };
+		m_Angle = { 0.0, 90.0, 0.0 };
 	}
 
 	void drawCamera() // 카메라를 배치하는 함수
@@ -75,13 +75,20 @@ public:
 	}
 };
 
-
+static int count = 0;
 static Cam camera;
-
+void Mouse(int button, int state, int x, int y);
 
 void SetupRC()
 {
+	camera.rotateEye(0, 90, 0);
 
+	for(int i = 0; i < 10; ++i)
+		for (int j = 0; j < 3; ++j) {
+			ctrlpoints[i][j][0] = -1000;
+			ctrlpoints[i][j][1] = -1000;
+			ctrlpoints[i][j][2] = -1000;
+		}
 }
 
 void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성 
@@ -93,6 +100,7 @@ void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성
 	// 상태 변수 초기화 함수 
 	SetupRC();
 	// 필요한 콜백 함수 설정
+	glutMouseFunc(Mouse);
 	glutDisplayFunc(drawScene); // 출력 콜백 함수 
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백 함수
 	glutKeyboardFunc(Keyboard); // 키보드 입력 콜백 함수
@@ -119,14 +127,19 @@ GLvoid drawScene(GLvoid)
 		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
 		// 선을 이용하여 그리드 연결
 		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		glDisable(GL_MAP2_VERTEX_3);
 	}
 	
-	glPointSize(2.0);
-	glColor3f(0.0, 0.0, 1.0);
+	glPointSize(5.0);
+	glColor3f(1.0, 0.0, 1.0);
 	glBegin(GL_POINTS);
-	for (int i = 0; i < 10; i++) 
-		for (int j = 0; j < 3; j++) 
+	
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 3; j++)
 			glVertex3fv(ctrlpoints[i][j]);
+
+	glEnd();
+
 	glPopMatrix();
 	glutSwapBuffers();
 	//	glFlush(); // 화면에 출력하기 
@@ -161,8 +174,7 @@ void TimerFunction(int value)
 {
 	glutPostRedisplay();
 
-	glutTimerFunc(100, TimerFunction, 1);
-
+	glutTimerFunc(1, TimerFunction, 1);
 }
 
 void Keyboard(unsigned char key, int x, int y)
@@ -242,42 +254,58 @@ void Keyboard(unsigned char key, int x, int y)
 }
 
 
-static int count = 0;
+
 static int swi = 0;
 void Mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		if (count <= 9) {
-			if (swi == 0)
-				ctrlpoints[count][0][0] = (x, 0, y);
-			else
-				ctrlpoints[count][2][0] = (x, 0, y);
-			swi = (swi + 1) % 2;
-			if (swi == 0)
-				count += 3;
-		}
+		if (check == FALSE) {
+			if (count <= 12) {
+				if (swi == 0) {
+					ctrlpoints[count][0][0] = x - 400;
+					ctrlpoints[count][0][1] = 0;
+					ctrlpoints[count][0][2] = -(300 - 1 - y);
 
-		if (count == 9 && check == FALSE) {
-			for (int i = 0; i <= 6; i += 3) {
-				ctrlpoints[i + 1][0][0] = ctrlpoints[i][0][0] + (float)(ctrlpoints[i + 3][0][0] - ctrlpoints[i][0][0]) / 3;
-				ctrlpoints[i + 1][2][0] = ctrlpoints[i][2][0] + (float)(ctrlpoints[i + 3][2][0] - ctrlpoints[i][2][0]) / 3;
-
-				ctrlpoints[i + 1][0][2] = ctrlpoints[i][0][2] + (float)(ctrlpoints[i + 3][0][2] - ctrlpoints[i][0][2]) / 3;
-				ctrlpoints[i + 1][2][2] = ctrlpoints[i][2][2] + (float)(ctrlpoints[i + 3][2][2] - ctrlpoints[i][2][2]) / 3;
-
-				ctrlpoints[i + 2][0][0] = ctrlpoints[i][0][0] + ((float)(ctrlpoints[i + 3][0][0] - ctrlpoints[i][0][0]) / 3) * 2;
-				ctrlpoints[i + 2][2][0] = ctrlpoints[i][2][0] + ((float)(ctrlpoints[i + 3][2][0] - ctrlpoints[i][2][0]) / 3) * 2;
-
-				ctrlpoints[i + 2][0][2] = ctrlpoints[i][0][2] + ((float)(ctrlpoints[i + 3][0][2] - ctrlpoints[i][0][2]) / 3) * 2;
-				ctrlpoints[i + 2][2][2] = ctrlpoints[i][2][2] + ((float)(ctrlpoints[i + 3][2][2] - ctrlpoints[i][2][2]) / 3) * 2;
+				}
+				else {
+					ctrlpoints[count][2][0] = x - 400;
+					ctrlpoints[count][2][1] = 0;
+					ctrlpoints[count][2][2] = -(300 - 1 - y);
+				}
+				swi = (swi + 1) % 2;
+				if (swi == 0)
+					count += 3;
 			}
 
-			for (int i = 0; i < 10; ++i) {
-				ctrlpoints[i][1][0] = ctrlpoints[i][0][0] + ((float)(ctrlpoints[i][2][0] - ctrlpoints[i][0][0]) / 2);
-				ctrlpoints[i][1][2] = ctrlpoints[i][0][2] + ((float)(ctrlpoints[i][2][2] - ctrlpoints[i][0][2]) / 2);
-			}
+			if (count == 12 && check == FALSE) {
+				for (int i = 0; i <= 6; i += 3) {
+					ctrlpoints[i + 1][0][0] = ctrlpoints[i][0][0] + (float)(ctrlpoints[i + 3][0][0] - ctrlpoints[i][0][0]) / 3;
+					ctrlpoints[i + 1][2][0] = ctrlpoints[i][2][0] + (float)(ctrlpoints[i + 3][2][0] - ctrlpoints[i][2][0]) / 3;
 
-			check = TRUE;
+					ctrlpoints[i + 1][0][2] = ctrlpoints[i][0][2] + (float)(ctrlpoints[i + 3][0][2] - ctrlpoints[i][0][2]) / 3;
+					ctrlpoints[i + 1][2][2] = ctrlpoints[i][2][2] + (float)(ctrlpoints[i + 3][2][2] - ctrlpoints[i][2][2]) / 3;
+
+					ctrlpoints[i + 2][0][0] = ctrlpoints[i][0][0] + ((float)(ctrlpoints[i + 3][0][0] - ctrlpoints[i][0][0]) / 3) * 2;
+					ctrlpoints[i + 2][2][0] = ctrlpoints[i][2][0] + ((float)(ctrlpoints[i + 3][2][0] - ctrlpoints[i][2][0]) / 3) * 2;
+
+					ctrlpoints[i + 2][0][2] = ctrlpoints[i][0][2] + ((float)(ctrlpoints[i + 3][0][2] - ctrlpoints[i][0][2]) / 3) * 2;
+					ctrlpoints[i + 2][2][2] = ctrlpoints[i][2][2] + ((float)(ctrlpoints[i + 3][2][2] - ctrlpoints[i][2][2]) / 3) * 2;
+
+					ctrlpoints[i + 1][0][1] = 0;
+					ctrlpoints[i + 2][2][1] = 0;
+				}
+
+				for (int i = 0; i < 10; ++i) {
+					ctrlpoints[i][1][0] = ctrlpoints[i][0][0] + ((float)(ctrlpoints[i][2][0] - ctrlpoints[i][0][0]) / 2);
+					ctrlpoints[i][1][2] = ctrlpoints[i][0][2] + ((float)(ctrlpoints[i][2][2] - ctrlpoints[i][0][2]) / 2);
+					ctrlpoints[i][1][1] = 0;
+				}
+
+				for (int i = 0; i < 10; ++i)
+					for (int j = 0; j < 3; ++j)
+						ctrlpoints[i][j][1] = 0;
+				check = TRUE;
+			}
 		}
 
 	}
