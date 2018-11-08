@@ -13,6 +13,10 @@ void SpecialKeys(int key, int x, int y);
 static int mode = 2;
 
 static int select = -100;
+static int right = 0;
+static BOOL change = FALSE;
+static int changeCount = 0;
+static BOOL chOn = FALSE;
 
 
 GLfloat ctrlpoints[10][3][3] = { 0, 0, 0 };
@@ -161,21 +165,21 @@ GLvoid drawScene(GLvoid)
 		glDisable(GL_MAP2_VERTEX_3);
 		glDisable(GL_MAP2_VERTEX_3);
 
-		glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[7][0][0]);
-		glEnable(GL_MAP2_VERTEX_3);
-		// 그리드를 이용한 곡면 드로잉 
-		glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
-		// 선을 이용하여 그리드 연결
-		glEvalMesh2(GL_LINE, 0, 10, 0, 10);
-		glDisable(GL_MAP2_VERTEX_3);
-		glDisable(GL_MAP2_VERTEX_3);
+		//glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[7][0][0]);
+		//glEnable(GL_MAP2_VERTEX_3);
+		//// 그리드를 이용한 곡면 드로잉 
+		//glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+		//// 선을 이용하여 그리드 연결
+		//glEvalMesh2(GL_LINE, 0, 10, 0, 10);
+		//glDisable(GL_MAP2_VERTEX_3);
+		//glDisable(GL_MAP2_VERTEX_3);
 	}
 	
 	glPointSize(5.0);
 	glColor3f(1.0, 0.0, 1.0);
 	glBegin(GL_POINTS);
 	
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 9; i++)
 		for (int j = 0; j < 3; j++)
 			glVertex3fv(ctrlpoints[i][j]);
 
@@ -215,6 +219,34 @@ void TimerFunction(int value)
 {
 	glutPostRedisplay();
 
+	if (chOn == TRUE) {
+		if (change == FALSE) {
+			for (int i = 0; i < 7; ++i)
+				for (int j = 0; j < 3; ++j) {
+					if (i % 2 == 0)
+						ctrlpoints[i][j][1] += 1;
+					else
+						ctrlpoints[i][j][1] -= 1;
+				}
+			changeCount++;
+			if (changeCount >= 100)
+				change = TRUE;
+		}
+
+		else if (change == TRUE) {
+			for (int i = 0; i < 7; ++i)
+				for (int j = 0; j < 3; ++j) {
+					if (i % 2 == 0)
+						ctrlpoints[i][j][1] -= 1;
+					else
+						ctrlpoints[i][j][1] += 1;
+				}
+			changeCount--;
+			if (changeCount <= -100)
+				change = FALSE;
+		}
+	}
+
 	glutTimerFunc(1, TimerFunction, 1);
 }
 static BOOL plusDir = FALSE;
@@ -223,6 +255,12 @@ static int opic = 0;
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+	case'h':
+		if (chOn == FALSE)
+			chOn = TRUE;
+		else
+			chOn = FALSE;
+		break;
 
 	case 'c':
 		if (plusDir == FALSE)
