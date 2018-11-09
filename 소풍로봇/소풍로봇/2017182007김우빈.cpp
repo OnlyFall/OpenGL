@@ -43,7 +43,8 @@ static int changeCount = 0;
 static BOOL chOn = FALSE;
 
 
-GLfloat ctrlpoints[80][3][3] = { 0, 0, 0 };
+GLfloat ctrlpoints[80][3] = { 0, 0, 0 };
+GLfloat ctrlpoints2[80][3] = { 0,0,0 };
 
 struct DOUBLE_3D_POS
 {
@@ -154,29 +155,61 @@ GLvoid drawPlan(GLvoid)
 	}
 }
 
+GLvoid DrawTree(float x, float z)
+{
+
+}
+
 GLvoid drawRail(GLvoid)
 {
-	glLineWidth(30);
 	glColor3f(1.0f, 0.0f, 0.0f);
-	for (int i = 0; i < drawTrue; ++i) {
-		for (int j = 2; j < 3; j+=2) {
-			glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &ctrlpoints[i * 6 + j][0][0]);
-			glEnable(GL_MAP2_VERTEX_3);
-			// 그리드를 이용한 곡면 드로잉 
-			glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
-			// 선을 이용하여 그리드 연결
-			glEvalMesh2(GL_FILL, 0, 10, 0, 10);
-			glDisable(GL_MAP2_VERTEX_3);
-			glDisable(GL_MAP2_VERTEX_3);
+	BOOL check = FALSE;
+	int i = 0;
+	int temp = count - 1;
+	check = FALSE;
+	i = 0;
+	
+	while (check != TRUE) {
+		if (count > 3) {
+			glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 3, &ctrlpoints[i][0]);
+
+			glEnable(GL_MAP1_VERTEX_3);
+
+			glMapGrid1f(10, 0.0, 1.0);
+			glEvalMesh1(GL_LINE, 0, 10);
 		}
+
+		glDisable(GL_MAP1_VERTEX_3);
+		i += 2;
+		if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
+			check = TRUE;
 	}
+
+
+	//check = FALSE;
+	//i = 0;
+	//while (check != TRUE) {
+	//	if (count > 3) {
+	//		glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpoints2[i][0]);
+
+	//		glEnable(GL_MAP1_VERTEX_3);
+
+	//		glMapGrid1f(10, 0.0, 1.0);
+	//		glEvalMesh1(GL_LINE, 0, 10);
+	//	}
+
+	//	glDisable(GL_MAP1_VERTEX_3);
+	//	i += 3;
+	//	if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
+	//		check = TRUE;
+	//}
 
 	glPointSize(5.0);
 	glColor3f(1.0, 0.0, 1.0);
 	glBegin(GL_POINTS);
 	for(int i = 0; i < count; ++i)
-		for(int j = 0; j < 3; ++j)
-			glVertex3fv(ctrlpoints[i][j]);
+		for(int j = 0; j < 2; ++j)
+			glVertex3fv(ctrlpoints[i]);
 	glEnd();
 }
 
@@ -330,58 +363,42 @@ void Keyboard(unsigned char key, int x, int y)
 	}
 }
 
-
+static float rad;
 
 void Mouse(int button, int state, int x, int y)
 {
-	float rad;
+
 	if (cameraNum == 1) {
+
+
+
+
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-			ctrlpoints[count][1][0] = x - 400;
-			ctrlpoints[count][1][1] = 100;
-			ctrlpoints[count][1][2] = -(300 - 1 - y);
-
-			count += 6;
-		}
-
-
-		if ((count / 6) % 2 == 0) {
-
-			rad = GetDirectionAngle(ctrlpoints[count - 6][1][0], ctrlpoints[count - 6][1][2], ctrlpoints[count][1][0], ctrlpoints[count][1][2]);
-			for (int i = 0; i < 5; ++i) {
-				ctrlpoints[count - 5 + i][1][0] = ctrlpoints[count - 6][1][0] + ((ctrlpoints[count][1][0] - ctrlpoints[count - 6][1][0]) / 6) * (i + 1);
-				ctrlpoints[count - 5 + i][1][1] = 100;
-				ctrlpoints[count - 5 + i][1][2] = ctrlpoints[count - 6][1][2] + ((ctrlpoints[count][1][2] - ctrlpoints[count - 6][1][2]) / 6) * (i + 1);
-
-				if (rad > 45) {
-
-					ctrlpoints[count - 5 + i][0][0] = ctrlpoints[count - 6][1][0] + ctrlpoints[count - 5 + i][1][0] * cos((3.141592 / 180.f) * (180 + rad) * 10);
-					ctrlpoints[count - 5 + i][0][1] = 100;
-					ctrlpoints[count - 5 + i][0][2] = ctrlpoints[count - 6][1][2] + ctrlpoints[count - 5 + i][1][0] * sin((3.141592 / 180.f) * (180 + rad) * 10);
-
-					ctrlpoints[count - 5 + i][2][0] = ctrlpoints[count - 6][1][0] + ctrlpoints[count - 5 + i][1][0] * cos((3.141592 / 180.f) * (rad) * 10);
-					ctrlpoints[count - 5 + i][2][1] = 100;
-					ctrlpoints[count - 5 + i][2][2] = ctrlpoints[count - 6][1][2] + ctrlpoints[count - 5 + i][1][0] * sin((3.141592 / 180.f) * (rad) * 10);
-				}
-				else {
-					ctrlpoints[count - 5 + i][0][0] = ctrlpoints[count - 6][1][0] + ctrlpoints[count - 5 + i][1][0] * cos((3.141592 / 180.f) * (rad) * 10);
-					ctrlpoints[count - 5 + i][0][1] = 100;
-					ctrlpoints[count - 5 + i][0][2] = ctrlpoints[count - 6][1][2] + ctrlpoints[count - 5 + i][1][0] * sin((3.141592 / 180.f) * (rad) * 10);
-
-					ctrlpoints[count - 5 + i][2][0] = ctrlpoints[count - 6][1][0] + ctrlpoints[count - 5 + i][1][0] * cos((3.141592 / 180.f) * (180 + rad) * 10);
-					ctrlpoints[count - 5 + i][2][1] = 100;
-					ctrlpoints[count - 5 + i][2][2] = ctrlpoints[count - 6][1][2] + ctrlpoints[count - 5 + i][1][0] * sin((3.141592 / 180.f) * (180 + rad) * 10);
-				}
+			ctrlpoints[count][0] = x - 400;
+			ctrlpoints[count][1] = 100;
+			ctrlpoints[count][2] = -(300 - 1 - y);
+			if (count % 2 == 0 && count >= 2) {
+				rad = GetDirectionAngle(ctrlpoints[count - 2][0], ctrlpoints[count - 2][2], ctrlpoints[count][0], ctrlpoints[count][2]);
+				ctrlpoints[count - 1][0] = ctrlpoints[count][0] + (sin((3.141592 / 180.f) * (180 + (rad))) * 30);
+				ctrlpoints[count - 1][1] = 100;
+				ctrlpoints[count - 1][2] = ctrlpoints[count][2] + (sin((3.141592 / 180.f) * (180 + (rad))) * 100);
 			}
-			drawTrue++;
+
+			count += 2;
 		}
+
+
+
 
 	}
-
-
-
 	glutPostRedisplay();
+
 }
+
+
+
+
+
 
 void SpecialKeys(int key, int x, int y) {
 
