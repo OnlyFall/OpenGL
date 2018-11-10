@@ -164,26 +164,76 @@ GLvoid drawRail(GLvoid)
 {
 	glColor3f(1.0f, 0.0f, 0.0f);
 	BOOL check = FALSE;
-	int i = 0;
-	int temp = count - 1;
-	check = FALSE;
-	i = 0;
-	
-	while (check != TRUE) {
-		if (count > 3) {
-			glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 3, &ctrlpoints[i][0]);
+	//int i = 0;
+	//int temp = count - 1;
+	//check = FALSE;
+	//i = 0;
 
-			glEnable(GL_MAP1_VERTEX_3);
 
-			glMapGrid1f(10, 0.0, 1.0);
-			glEvalMesh1(GL_LINE, 0, 10);
+
+	for (int i = 0; i < count; ++i) {
+		float *p1 = ctrlpoints[(i + count - 3) % count];
+		float *p2 = ctrlpoints[(i + count - 2) % count];
+		float *p3 = ctrlpoints[(i + count - 1) % count];
+		float *p4 = ctrlpoints[(i + count - 0) % count];
+
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glBegin(GL_LINE_STRIP);
+		for (int j = 0; j < 100; ++j)
+		{
+			float t = j / 100.f;
+			float x = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+			float y = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+			
+			glVertex3f(x, 100, y);
 		}
+		glEnd();
 
-		glDisable(GL_MAP1_VERTEX_3);
-		i += 2;
-		if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
-			check = TRUE;
+		glColor3f(1.f, 1.f, 0.f);
+		glBegin(GL_POINTS);
+		glVertex3f(ctrlpoints[i][0], ctrlpoints[i][1], ctrlpoints[i][2]);
+		glEnd();
 	}
+
+	for (int i = 0; i < count; ++i) {
+		float *p1 = ctrlpoints[(i + count - 3) % count];
+		float *p2 = ctrlpoints[(i + count - 2) % count];
+		float *p3 = ctrlpoints[(i + count - 1) % count];
+		float *p4 = ctrlpoints[(i + count - 0) % count];
+
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glBegin(GL_LINE_STRIP);
+		for (int j = 0; j < 100; ++j)
+		{
+			float t = j / 100.f;
+			float x = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+			float y = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+
+			glVertex3f(x * 0.9, 100, y * 0.9);
+		}
+		glEnd();
+
+		glColor3f(1.f, 1.f, 0.f);
+		glBegin(GL_POINTS);
+		glVertex3f(ctrlpoints[i][0], ctrlpoints[i][1], ctrlpoints[i][2]);
+		glEnd();
+	}
+
+	//while (check != TRUE) {
+	//	if (count > 3) {
+	//		glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 3, &ctrlpoints[i][0]);
+
+	//		glEnable(GL_MAP1_VERTEX_3);
+
+	//		glMapGrid1f(10, 0.0, 1.0);
+	//		glEvalMesh1(GL_LINE, 0, 10);
+	//	}
+
+	//	glDisable(GL_MAP1_VERTEX_3);
+	//	i += 2;
+	//	if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
+	//		check = TRUE;
+	//}
 
 
 	//check = FALSE;
@@ -204,13 +254,12 @@ GLvoid drawRail(GLvoid)
 	//		check = TRUE;
 	//}
 
-	glPointSize(5.0);
-	glColor3f(1.0, 0.0, 1.0);
-	glBegin(GL_POINTS);
-	for(int i = 0; i < count; ++i)
-		for(int j = 0; j < 2; ++j)
-			glVertex3fv(ctrlpoints[i]);
-	glEnd();
+	//glPointSize(5.0);
+	//glColor3f(1.0, 0.0, 1.0);
+	//glBegin(GL_POINTS);
+	//for(int i = 0; i < count; ++i)
+	//	for(int j = 0; j < 2; ++j)
+	//		glVertex3fv(ctrlpoints[i]);
 }
 
 GLvoid drawScene(GLvoid)
@@ -370,25 +419,12 @@ void Mouse(int button, int state, int x, int y)
 
 	if (cameraNum == 1) {
 
-
-
-
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 			ctrlpoints[count][0] = x - 400;
 			ctrlpoints[count][1] = 100;
 			ctrlpoints[count][2] = -(300 - 1 - y);
-			if (count % 2 == 0 && count >= 2) {
-				rad = GetDirectionAngle(ctrlpoints[count - 2][0], ctrlpoints[count - 2][2], ctrlpoints[count][0], ctrlpoints[count][2]);
-				ctrlpoints[count - 1][0] = ctrlpoints[count][0] + (sin((3.141592 / 180.f) * (180 + (rad))) * 30);
-				ctrlpoints[count - 1][1] = 100;
-				ctrlpoints[count - 1][2] = ctrlpoints[count][2] + (sin((3.141592 / 180.f) * (180 + (rad))) * 100);
-			}
-
-			count += 2;
+			count ++;
 		}
-
-
-
 
 	}
 	glutPostRedisplay();
