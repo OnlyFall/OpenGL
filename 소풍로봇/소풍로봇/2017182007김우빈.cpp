@@ -44,7 +44,9 @@ static BOOL chOn = FALSE;
 
 
 GLfloat ctrlpoints[80][3] = { 0, 0, 0 };
+GLfloat Wall[100][3] = { 0,0,0 };
 GLfloat ctrlpoints2[80][3] = { 0,0,0 };
+GLfloat TreePos[10][3] = { 0, 0, 0 };
 
 struct DOUBLE_3D_POS
 {
@@ -119,6 +121,11 @@ void Mouse(int button, int state, int x, int y);
 
 void SetupRC()
 {
+	for (int i = 0; i < 10; ++i) {
+		TreePos[i][0] = rand() % 400 - 200;
+		TreePos[i][1] = 50;
+		TreePos[i][2] = rand() % 400 - 200;
+	}
 	camera.rotateEye(0, 40, 0);
 	topView.rotateEye(0, 90, 0);
 }
@@ -155,9 +162,14 @@ GLvoid drawPlan(GLvoid)
 	}
 }
 
-GLvoid DrawTree(float x, float z)
+GLvoid DrawTree(float x, float y, float z)
 {
-
+	glPushMatrix();
+	glTranslatef(x, y, z);
+	glRotatef(90, 1, 0, 0);
+	glColor3f(0.9f, 0.4f, 0.4f);
+	glutSolidCylinder(10, 30, 20, 20);
+	glPopMatrix();
 }
 
 GLvoid drawRail(GLvoid)
@@ -203,13 +215,13 @@ GLvoid drawRail(GLvoid)
 
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glBegin(GL_LINE_STRIP);
-		for (int j = 0; j < 100; ++j)
+		for (int j = 0; j <= 100; ++j)
 		{
 			float t = j / 100.f;
-			float x = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
-			float y = ((pow(t, 3) * -1.f + 2.f *pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+			float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+			float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
-			glVertex3f(x * 0.9, 100, y * 0.9);
+			glVertex3f(x * 0.7, 100, y * 0.7);
 		}
 		glEnd();
 
@@ -219,47 +231,17 @@ GLvoid drawRail(GLvoid)
 		glEnd();
 	}
 
-	//while (check != TRUE) {
-	//	if (count > 3) {
-	//		glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 3, &ctrlpoints[i][0]);
+	
+}
 
-	//		glEnable(GL_MAP1_VERTEX_3);
-
-	//		glMapGrid1f(10, 0.0, 1.0);
-	//		glEvalMesh1(GL_LINE, 0, 10);
-	//	}
-
-	//	glDisable(GL_MAP1_VERTEX_3);
-	//	i += 2;
-	//	if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
-	//		check = TRUE;
-	//}
-
-
-	//check = FALSE;
-	//i = 0;
-	//while (check != TRUE) {
-	//	if (count > 3) {
-	//		glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpoints2[i][0]);
-
-	//		glEnable(GL_MAP1_VERTEX_3);
-
-	//		glMapGrid1f(10, 0.0, 1.0);
-	//		glEvalMesh1(GL_LINE, 0, 10);
-	//	}
-
-	//	glDisable(GL_MAP1_VERTEX_3);
-	//	i += 3;
-	//	if (i >= count && i + 1 >= count || i + 2 >= count || i + 3 >= count)
-	//		check = TRUE;
-	//}
-
-	//glPointSize(5.0);
-	//glColor3f(1.0, 0.0, 1.0);
-	//glBegin(GL_POINTS);
-	//for(int i = 0; i < count; ++i)
-	//	for(int j = 0; j < 2; ++j)
-	//		glVertex3fv(ctrlpoints[i]);
+GLvoid DrawWall(float x, float y, float z)
+{
+	glPushMatrix();
+	glTranslatef(x, y, z);
+	glColor3f(0.5f, 0.f, 1.0f);
+	glRotatef(90, 1, 0, 0);
+	glutSolidCylinder(5, 50, 10, 10);
+	glPopMatrix();
 }
 
 GLvoid drawScene(GLvoid)
@@ -277,11 +259,17 @@ GLvoid drawScene(GLvoid)
 		camera.drawCamera();
 	else
 		topView.drawCamera();
-
+	
+	for (int i = 0; i < count; ++i)
+		DrawWall(Wall[i][0], Wall[i][1], Wall[i][2]);
 
 	drawRail();
 
 	drawPlan();
+
+	for (int i = 0; i < 10; ++i) {
+		DrawTree(TreePos[i][0], TreePos[i][1], TreePos[i][2]);
+	}
 
 
 
@@ -423,6 +411,9 @@ void Mouse(int button, int state, int x, int y)
 			ctrlpoints[count][0] = x - 400;
 			ctrlpoints[count][1] = 100;
 			ctrlpoints[count][2] = -(300 - 1 - y);
+			Wall[count][0] = x - 400;
+			Wall[count][1] = 50;
+			Wall[count][2] = -(300 - 1 - y);
 			count ++;
 		}
 
