@@ -604,6 +604,15 @@ static int nextStage1 = 0;
 
 static int checkCar2 = 40;
 static int nextStage2 = 0;
+GLfloat fogColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat am[] = { 0.0f, 0.0f, 1.0f, 0.0f};
+GLfloat ambientLight[] = { 0.3f, 0.5f, 0.8f, 1.0f };
+GLfloat diffuseLight[] = { 0.25f, 0.25f, 0.25f, 0.5f };
+GLfloat specu[] = { 0.6f, 0.4f, 0.f, 1.0f };
+GLfloat gray[] = { 0.75f, 0.75f, 0.75f, 1.0f };
+
+
+static BOOL fogOn = TRUE;
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
@@ -611,7 +620,30 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
+	if (fogOn == TRUE) {
+		glEnable(GL_LIGHTING);
+		glColor3f(0.7f, 1.0f, 0.0f);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specu);
+		glLightfv(GL_LIGHT0, GL_POSITION, am);
+		glEnable(GL_LIGHT0);
 
+		glEnable(GL_COLOR_MATERIAL);
+
+		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, specu);
+		glMateriali(GL_FRONT, GL_SHININESS, 128);
+
+		/*glEnable(GL_FOG);
+		glFogf(GL_FOG_MODE, GL_LINEAR);*/
+	}
+	else {
+		glDisable(GL_FOG);
+		glDisable(GL_LIGHT0);
+	}
 	glPushMatrix();
 
 
@@ -852,6 +884,14 @@ void Keyboard(unsigned char key, int x, int y)
 			}
 		}
 
+		break;
+
+	case 'o':
+	case 'O':
+		if (fogOn == FALSE)
+			fogOn = TRUE;
+		else
+			fogOn = FALSE;
 		break;
 
 	case 'q':
