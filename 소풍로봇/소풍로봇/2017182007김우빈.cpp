@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <gl\freeglut.h>
 #include <math.h>
+#include "weather.h"
+
 
 #define D3DX_PI    ((FLOAT)  3.141592654f)
 #define D3DXToRadian(degree)((degree) * (D3DX_PI / 180.f))
@@ -480,6 +482,33 @@ GLvoid DrawTunel()
 
 }
 
+GLvoid Snow()
+{
+	//selectWeather = 1;
+
+	for (int i = 0; i < 100; ++i) {
+		glPushMatrix();
+		glTranslatef(snow[i].x, snow[i].y, snow[i].z);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glutSolidSphere(5, 5, 5);
+		glPopMatrix();
+	}
+}
+
+GLvoid Rainism()
+{
+	//selectWeather = 1;
+
+	for (int i = 0; i < 100; ++i) {
+		glPushMatrix();
+		glTranslatef(rain[i].x, rain[i].y, rain[i].z);
+		glRotatef(90, 1, 0, 0);
+		glColor3f(0.0f, 0.1f, 1.0f);
+		glutSolidCylinder(2, 15, 15, 15);
+		glPopMatrix();
+	}
+}
+
 GLvoid DrawCar(int j, int c, int num)
 {
 	glPushMatrix();
@@ -493,15 +522,17 @@ GLvoid DrawCar(int j, int c, int num)
 		float t = j / 100.f;
 		float t1 = (j + 1) / 100.f;
 		float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
-		float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
+		double y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
 		float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
 	
 		float x1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[0] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[0] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[0] + (pow(t1, 3) - pow(t1, 2)) * p4[0]) / 2.f;
-		float y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
+		double y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
 		float z1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[2] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[2] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[2] + (pow(t1, 3) - pow(t1, 2)) * p4[2]) / 2.f;
 		
-		int rad = GetDegree(x1, y1, x, y);
+		int radi;
+		radi = GetDegree(x, y, x1, y1);
+
 		float rad1 = GetDegree(x1, z1, x, z);
 
 		glPushMatrix();
@@ -510,29 +541,25 @@ GLvoid DrawCar(int j, int c, int num)
 		Roll.EyeEye(x, y + 20, z);
 		//Roll.rotateEye(0, rad1, 0);
 		glTranslatef(x, y, z);
-		
+
 	//	glRotatef(rad, 0, 0, 1);
-		
-		if (num == 1)
-			saveRad += rad1;
-		else if (num == 2)
-			saveRad2 += rad1;
-		else if (num == 3)
-			saveRad3 += rad1;
-
-
 		glPushMatrix();
-
-		if(num == 1)
-			glRotatef(rad1, 0, 1, 0);
-		else if (num == 2)
-			glRotatef(rad1, 0, 1, 0);
-		else if (num == 3)
-			glRotatef(rad1, 0, 1, 0);
-		glRotatef(rad, 0, 0, 1);
+		
+		//if(num == 1)
+		//	glRotatef(rad1, 0, 1, 0);
+		//else if (num == 2)
+		//	glRotatef(rad1, 0, 1, 0);
+		//else if (num == 3)
+		glRotatef(rad1, 0, 1, 0);
+	
+		
+		glPushMatrix();
+		glRotatef(-radi, 1, 0, 0);
 		glutSolidCube(20);
 		glColor3f(1.0f, 0.0f, 1.0f);
 		glutWireCube(21);
+		glPopMatrix();
+
 		glPopMatrix();
 
 		glColor3f(1.f, 1.f, 0.f);
@@ -593,6 +620,10 @@ GLvoid drawScene(GLvoid)
 	if(count > 2)
 		DrawTunel();
 
+	if (selectWeather == 1)
+		Rainism();
+	else if (selectWeather == 2)
+		Snow();
 
 
 	glPopMatrix();
@@ -662,6 +693,19 @@ void TimerFunction(int value)
 			checkCar2 = 0;
 			nextStage2 = (nextStage2 + 1) % count;
 		}
+	}
+
+	if (selectWeather != 0) {
+
+		for (int i = 0; i < 100; ++i) {
+			rain[i].y -= 2;
+			snow[i].y -= 2;
+			if (rain[i].y < 0)
+				rain[i].y = rand() % 300 + 100;
+			if (snow[i].y < 0)
+				snow[i].y = rand() % 300 + 100;
+		}
+
 	}
 	glutTimerFunc(10, TimerFunction, 1);
 }
@@ -759,6 +803,33 @@ void Keyboard(unsigned char key, int x, int y)
 	case '0':
 		zZoom -= 1;
 		Reshape(800, 600);
+		break;
+
+	case 'r':
+	case 'R':
+
+		if (selectWeather == 0)
+			selectWeather = 1;
+		else if (selectWeather == 1)
+			selectWeather = 2;
+		else if (selectWeather == 2)
+			selectWeather = 0;
+		
+		if (selectWeather == 1) {
+			for (int i = 0; i < 100; ++i) {
+				rain[i].x = rand() % 400 - 200;
+				rain[i].y = rand() % 200 + 100;
+				rain[i].z = rand() % 400 - 200;
+			}
+		}
+		else if (selectWeather == 2) {
+			for (int i = 0; i < 100; ++i) {
+				snow[i].x = rand() % 400 - 200;
+				snow[i].y = rand() % 200 + 100;
+				snow[i].z = rand() % 400 - 200;
+			}
+		}
+
 		break;
 
 	case 'q':
