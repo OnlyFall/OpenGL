@@ -19,12 +19,13 @@ static float GetDirectionAngle(float x1, float y1, float x2, float y2)
 
 	//if (0 > Angle)
 	//	Angle += 360;
+
 	return Angle;
 }
 
 double GetDegree(float x1, float y1, float x2, float y2)
 {
-	return atan2(y2 - y1, x2 - x1) * 180 / 3.1415926535;
+	return 90 - (atan2(y2 - y1, x2 - x1) * 180 / 3.1415926535);
 }
 
 GLvoid drawScene(GLvoid);
@@ -37,7 +38,6 @@ void SpecialKeys(int key, int x, int y);
 static int mode = 1;
 
 static int select = -100;
-static int right = 0;
 static BOOL change = FALSE;
 static int changeCount = 0;
 static BOOL chOn = FALSE;
@@ -110,12 +110,28 @@ public:
 		m_MoveEye.y += y;
 		m_MoveEye.z += z;
 	}
+
+	void CenterEye(double x, double y, double z)
+	{
+		m_Center.x = x;
+		m_Center.y = y;
+		m_Center.z = z;
+	}
+
+	void EyeEye(double x, double y, double z)
+	{
+		m_Eye.x = x;
+		m_Eye.y = y;
+		m_Eye.z = z;
+	}
 };
 
 
 static Cam camera;
 static Cam FrontView;
 static Cam topView;
+static Cam Roll;
+
 static int cameraNum;
 static int count = 0;
 static int drawTrue = 0;
@@ -135,6 +151,7 @@ void SetupRC()
 	camera.rotateEye(0, 40, 0);
 	topView.rotateEye(0, 90, 0);
 	FrontView.moveEye(0, 0, 100);
+	Roll.Init();
 }
 
 void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성 
@@ -282,9 +299,33 @@ GLvoid drawRail(GLvoid)
 			float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
 			float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
-			glVertex3f(x * 0.9, y, z * 0.9);
+			glVertex3f(x * 0.9, y + 5, z * 0.9);
 		}
 		glEnd();
+
+		for (int j = 0; j <= 100; j += 20) {
+			glBegin(GL_LINES);
+			float t = j / 100.f;
+			float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+			float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
+			float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+			
+			glVertex3f(x, y, z);
+			glVertex3f(x*1.1, y + 5, z*1.1);
+			glEnd();
+		}
+
+		for (int j = 0; j <= 100; j += 20) {
+			glBegin(GL_LINES);
+			float t = j / 100.f;
+			float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+			float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
+			float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+
+			glVertex3f(x, y, z);
+			glVertex3f(x*0.9, y + 5, z*0.9);
+			glEnd();
+		}
 
 		glColor3f(1.f, 1.f, 0.f);
 		glBegin(GL_POINTS);
@@ -308,7 +349,7 @@ GLvoid drawRail(GLvoid)
 			float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
 			float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
-			glVertex3f(x * 1.1, y, z * 1.1);
+			glVertex3f(x * 1.1, y + 5, z * 1.1);
 		}
 		glEnd();
 
@@ -335,6 +376,110 @@ GLvoid DrawWall(float x, float y, float z)
 
 }
 
+
+GLvoid DrawTunel()
+{
+	glColor3f(0.7f, 0.7f, 0.7f);
+	GLfloat tunel[3][3][3];
+	float *p1 = ctrlpoints[(1 + count - 3) % count];
+	float *p2 = ctrlpoints[(1 + count - 2) % count];
+	float *p3 = ctrlpoints[(1 + count - 1) % count];
+	float *p4 = ctrlpoints[(1 + count - 0) % count];
+
+	float t = 10 / 100.f;
+	float t1 = 50 / 100.f;
+	float t2 = 80 / 100.f;
+	
+	float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
+	float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
+	float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
+
+	float x1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[0] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[0] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[0] + (pow(t1, 3) - pow(t1, 2)) * p4[0]) / 2.f;
+	float y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
+	float z1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[2] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[2] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[2] + (pow(t1, 3) - pow(t1, 2)) * p4[2]) / 2.f;
+
+	float x2 = ((pow(t2, 3) * -1.f + 2.f * pow(t2, 2) - t2) * p1[0] + (3.f * pow(t2, 3) - 5.f * pow(t2, 2) + 2.f) * p2[0] + (-3.f * pow(t2, 3) + 4.f * pow(t2, 2) + t2) * p3[0] + (pow(t2, 3) - pow(t2, 2)) * p4[0]) / 2.f;
+	float y2 = ((pow(t2, 3) * -1.f + 2.f * pow(t2, 2) - t2) * p1[1] + (3.f * pow(t2, 3) - 5.f * pow(t2, 2) + 2.f) * p2[1] + (-3.f * pow(t2, 3) + 4.f * pow(t2, 2) + t2) * p3[1] + (pow(t2, 3) - pow(t2, 2)) * p4[1]) / 2.f;
+	float z2 = ((pow(t2, 3) * -1.f + 2.f * pow(t2, 2) - t2) * p1[2] + (3.f * pow(t2, 3) - 5.f * pow(t2, 2) + 2.f) * p2[2] + (-3.f * pow(t2, 3) + 4.f * pow(t2, 2) + t2) * p3[2] + (pow(t2, 3) - pow(t2, 2)) * p4[2]) / 2.f;
+
+	tunel[0][0][0] = x * 0.8;
+	tunel[0][0][1] = y;
+	tunel[0][0][2] = z * 0.8;
+
+	tunel[1][0][0] = x;
+	tunel[1][0][1] = y + 100;
+	tunel[1][0][2] = z;
+
+	tunel[2][0][0] = x * 1.2;
+	tunel[2][0][1] = y;
+	tunel[2][0][2] = z * 1.2;
+
+	tunel[0][1][0] = x1 * 0.8;
+	tunel[0][1][1] = y1;
+	tunel[0][1][2] = z1 * 0.8;
+
+	tunel[1][1][0] = x1;
+	tunel[1][1][1] = y1 + 100;
+	tunel[1][1][2] = z1;
+
+	tunel[2][1][0] = x1 * 1.2;
+	tunel[2][1][1] = y1;
+	tunel[2][1][2] = z1 * 1.2;
+
+	tunel[0][2][0] = x2 * 0.8;
+	tunel[0][2][1] = y2;
+	tunel[0][2][2] = z2 * 0.8;
+
+	tunel[1][2][0] = x2;
+	tunel[1][2][1] = y2 + 100;
+	tunel[1][2][2] = z2;
+
+	tunel[2][2][0] = x2 * 1.2;
+	tunel[2][2][1] = y2;
+	tunel[2][2][2] = z2 * 1.2;
+
+	
+	glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &tunel[0][0][0]);
+	glEnable(GL_MAP2_VERTEX_3);
+	// 그리드를 이용한 곡면 드로잉 
+	glMapGrid2f(10, 0.0, 1.0, 10, 0.0, 1.0);
+	// 선을 이용하여 그리드 연결
+	glEvalMesh2(GL_FILL, 0, 10, 0, 10);
+	glDisable(GL_MAP2_VERTEX_3);
+	
+
+	glBegin(GL_LINES);
+	glVertex3f(x * 0.8, y , z * 0.8);
+	glVertex3f(x , y, z);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(x * 1.2, y, z * 1.2);
+	glVertex3f(x, y, z);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(x1 * 0.8, y1, z1 * 0.8);
+	glVertex3f(x1, y1, z1);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(x1 * 1.2, y1, z1 * 1.2);
+	glVertex3f(x1, y1, z1);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(x2 * 0.8, y2, z2 * 0.8);
+	glVertex3f(x2, y2, z2);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(x2, y2, z2);
+	glVertex3f(x2 * 1.2, y2, z2 * 1.2);
+	glEnd();
+
+}
+
 GLvoid DrawCar(int j, int c, int num)
 {
 	glPushMatrix();
@@ -351,13 +496,23 @@ GLvoid DrawCar(int j, int c, int num)
 		float y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
 		float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
+	
 		float x1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[0] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[0] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[0] + (pow(t1, 3) - pow(t1, 2)) * p4[0]) / 2.f;
 		float y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
 		float z1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[2] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[2] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[2] + (pow(t1, 3) - pow(t1, 2)) * p4[2]) / 2.f;
+		
+		int rad = GetDegree(x1, y1, x, y);
+		float rad1 = GetDegree(x1, z1, x, z);
 
+		glPushMatrix();
+		Roll.Init();
+		Roll.CenterEye(x1, y1 + 20, z1);
+		Roll.EyeEye(x, y + 20, z);
+		//Roll.rotateEye(0, rad1, 0);
 		glTranslatef(x, y, z);
-		float rad = GetDirectionAngle(x, y, x1, y1);
-		float rad1 = GetDegree(x, z, x1, z1);
+		
+	//	glRotatef(rad, 0, 0, 1);
+		
 		if (num == 1)
 			saveRad += rad1;
 		else if (num == 2)
@@ -365,19 +520,27 @@ GLvoid DrawCar(int j, int c, int num)
 		else if (num == 3)
 			saveRad3 += rad1;
 
-		glRotatef(rad, 0, 0, 1);
-		/*if(num == 1)
+
+		glPushMatrix();
+
+		if(num == 1)
 			glRotatef(rad1, 0, 1, 0);
 		else if (num == 2)
 			glRotatef(rad1, 0, 1, 0);
 		else if (num == 3)
-			glRotatef(rad1, 0, 1, 0);*/
+			glRotatef(rad1, 0, 1, 0);
+		glRotatef(rad, 0, 0, 1);
 		glutSolidCube(20);
+		glColor3f(1.0f, 0.0f, 1.0f);
+		glutWireCube(21);
+		glPopMatrix();
+
 		glColor3f(1.f, 1.f, 0.f);
 		glBegin(GL_POINTS);
 		glVertex3f(x, y, z);
 		glVertex3f(x1,y1 ,z1);
 		glEnd();
+		glPopMatrix();
 
 	}
 	glPopMatrix();
@@ -409,6 +572,8 @@ GLvoid drawScene(GLvoid)
 		topView.drawCamera();
 	else if (cameraNum == 2)
 		FrontView.drawCamera();
+	else if (cameraNum == 3)
+		Roll.drawCamera();
 
 	for (int i = 0; i < count; ++i)
 		DrawWall(Wall[i][0], Wall[i][1], Wall[i][2]);
@@ -424,6 +589,9 @@ GLvoid drawScene(GLvoid)
 	for (int i = 0; i < 10; ++i) {
 		DrawTree(TreePos[i][0], TreePos[i][1], TreePos[i][2], TreePos[i][3]);
 	}
+
+	if(count > 2)
+		DrawTunel();
 
 
 
@@ -448,6 +616,8 @@ GLvoid Reshape(int w, int h)
 		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
 		gluPerspective(zZoom, 1.0, 1.0, 1000.0);
 		glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+		if (cameraNum == 3)
+			glTranslatef(0, 0, 500);
 	}
 	else if (mode == 2)
 		glOrtho(-400.0, 400.0, -300.0, 300.0, -400.0, 400.0);
@@ -559,20 +729,26 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case '1':
 		mode = 1;
-		Reshape(800, 600);
 		cameraNum = 0;
+		Reshape(800, 600);
 		break;
 
 	case '2':
 		mode = 2;
-		Reshape(800, 600);
 		cameraNum = 1;
+		Reshape(800, 600);
 		break;
 
 	case '3':
 		mode = 2;
-		Reshape(800, 600);
 		cameraNum = 2;
+		Reshape(800, 600);
+		break;
+		
+	case '4':
+		mode = 1;
+		cameraNum = 3;
+		Reshape(800, 600);
 		break;
 
 	case '9':
@@ -592,22 +768,44 @@ void Keyboard(unsigned char key, int x, int y)
 }
 static BOOL click = FALSE;
 static float rad;
+static BOOL right = FALSE;
 void Mouse(int button, int state, int x, int y)
 {
-
+	bool buildOk = true;
 	if (cameraNum == 1) {
 
-		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-			ctrlpoints[count][0] = x - 400;
-			ctrlpoints[count][1] = 100;
-			ctrlpoints[count][2] = -(300 - 1 - y);
-			Wall[count][0] = x - 400;
-			Wall[count][1] = 100;
-			Wall[count][2] = -(300 - 1 - y);
-			Wall[count][3] = 100;
-			count ++;
+		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && x - 400 > -200 && x - 400 < 200 && -(300 - 1 - y) > -200 && -(300 - 1 - y) < 200){
+			for (int i = 0; i < 10; ++i) {
+				if (TreePos[i][0] - 10 < x - 400 && TreePos[i][0] + 10 > x - 400 && TreePos[i][2] - 10 < -(300 - 1 - y) && TreePos[i][2] + 10 > -(300 - 1 - y))
+					buildOk = false;
+			}
+
+			if (buildOk == true) {
+				ctrlpoints[count][0] = x - 400;
+				ctrlpoints[count][1] = 100;
+				ctrlpoints[count][2] = -(300 - 1 - y);
+				Wall[count][0] = x - 400;
+				Wall[count][1] = 100;
+				Wall[count][2] = -(300 - 1 - y);
+				Wall[count][3] = 100;
+				count++;
+			}
+		}
+		buildOk = true;
+
+		if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+			for (int i = 0; i < count; ++i) {
+				if (ctrlpoints[i][0] - 10 < x - 400 && ctrlpoints[i][0] + 10 > x - 400 && ctrlpoints[i][2] - 10 < -(300 - 1 - y) && ctrlpoints[i][2] + 10 > -(300 - 1 - y)) {
+					select = i;
+					right = TRUE;
+				}
+			}
 		}
 
+		if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+			right = FALSE;
+			select = -100;
+		}
 	}
 
 	else if (cameraNum == 2) {
@@ -637,6 +835,13 @@ void Motion(int x, int y)
 	if (click == TRUE) {
 		ctrlpoints[select][1] = (300 - 1 - y);
 		Wall[select][1] = (300 - 1 - y);
+	}
+	
+	if (right == TRUE) {
+		ctrlpoints[select][0] = x - 400;
+		ctrlpoints[select][2] = -(300 - 1 - y);
+		Wall[select][0] = x - 400;
+		Wall[select][2] = -(300 - 1 - y);
 	}
 	glutPostRedisplay();
 }
