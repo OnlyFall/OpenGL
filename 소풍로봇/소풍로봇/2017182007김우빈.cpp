@@ -6,7 +6,7 @@
 #include <gl\freeglut.h>
 #include <math.h>
 #include "weather.h"
-
+#include "robot.h"
 
 #define D3DX_PI    ((FLOAT)  3.141592654f)
 #define D3DXToRadian(degree)((degree) * (D3DX_PI / 180.f))
@@ -28,7 +28,7 @@ static float GetDirectionAngle(float x1, float y1, float x2, float y2)
 
 double GetDegree(float x1, float y1, float x2, float y2)
 {
-	return 90 - (atan2(y2 - y1, x2 - x1) * 180 / 3.1415926535);
+	return (atan2(y2 - y1, x2 - x1) * 180 / 3.1415926535);
 }
 
 GLvoid drawScene(GLvoid);
@@ -511,89 +511,6 @@ GLvoid Rainism()
 }
 
 
-//GLvoid DrawCar(int j, int c, int num)
-//{
-//	glPushMatrix();
-//	{
-//		glColor3f(0.0f, 1.0f, 1.0f);
-//		float *p1 = ctrlpoints[(c + count - 3) % count];
-//		float *p2 = ctrlpoints[(c + count - 2) % count];
-//		float *p3 = ctrlpoints[(c + count - 1) % count];
-//		float *p4 = ctrlpoints[(c + count - 0) % count];
-//
-//		float t = j / 100.f;
-//		float t1 = (j + 1) / 100.f;
-//		float x = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[0] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[0] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[0] + (pow(t, 3) - pow(t, 2)) * p4[0]) / 2.f;
-//		double y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
-//		float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
-//
-//	
-//		float x1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[0] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[0] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[0] + (pow(t1, 3) - pow(t1, 2)) * p4[0]) / 2.f;
-//		double y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
-//		float z1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[2] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[2] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[2] + (pow(t1, 3) - pow(t1, 2)) * p4[2]) / 2.f;
-//	
-//		
-//		int radi;
-//
-//		if (j == 100) {
-//			int tmp = c + 1;
-//			float *s1 = ctrlpoints[(tmp + count - 3) % count];
-//			float *s2 = ctrlpoints[(tmp + count - 2) % count];
-//			float *s3 = ctrlpoints[(tmp + count - 1) % count];
-//			float *s4 = ctrlpoints[(tmp + count - 0) % count];
-//
-//			float k = 0 / 100.f;
-//			
-//			float x2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[0] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[0] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + k) * s3[0] + (pow(k, 3) - pow(k, 2)) * s4[0]) / 2.f;
-//			double y2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[1] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[1] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + k) * s3[1] + (pow(k, 3) - pow(k, 2)) * s4[1]) / 2.f;
-//			float z2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[2] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[2] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + t) * s3[2] + (pow(k, 3) - pow(k, 2)) * s4[2]) / 2.f;
-//
-//			radi = GetDegree(x, y, x2, y2);
-//		}
-//		else
-//			radi = GetDegree(x, y, x1, y1);
-//		float rad1 = GetDegree(x1, z1, x, z);
-//
-//
-//	
-//		glPushMatrix();
-//		Roll.Init();
-//		Roll.CenterEye(x1, y1 + 20, z1);
-//		Roll.EyeEye(x, y + 20, z);
-//		//Roll.rotateEye(0, rad1, 0);
-//		glTranslatef(x, y, z);
-//
-//	//	glRotatef(rad, 0, 0, 1);
-//		glPushMatrix();
-//		
-//		//if(num == 1)
-//		//	glRotatef(rad1, 0, 1, 0);
-//		//else if (num == 2)
-//		//	glRotatef(rad1, 0, 1, 0);
-//		//else if (num == 3)
-//		glRotatef(rad1, 0, 1, 0);
-//	
-//		
-//		glPushMatrix();
-//		glRotatef(-radi, 1, 0, 0);
-//		glutSolidCube(20);
-//		glColor3f(1.0f, 0.0f, 1.0f);
-//		glutWireCube(21);
-//		glPopMatrix();
-//
-//		glPopMatrix();
-//
-//		glColor3f(1.f, 1.f, 0.f);
-//		glBegin(GL_POINTS);
-//		glVertex3f(x, y, z);
-//		glVertex3f(x1,y1 ,z1);
-//		glEnd();
-//		glPopMatrix();
-//
-//	}
-//	glPopMatrix();
-//}
-
 GLvoid DrawCar(int j, int c, int num)
 {
 	glPushMatrix();
@@ -610,12 +527,12 @@ GLvoid DrawCar(int j, int c, int num)
 		double y = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[1] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[1] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[1] + (pow(t, 3) - pow(t, 2)) * p4[1]) / 2.f;
 		float z = ((pow(t, 3) * -1.f + 2.f * pow(t, 2) - t) * p1[2] + (3.f * pow(t, 3) - 5.f * pow(t, 2) + 2.f) * p2[2] + (-3.f * pow(t, 3) + 4.f * pow(t, 2) + t) * p3[2] + (pow(t, 3) - pow(t, 2)) * p4[2]) / 2.f;
 
-
+	
 		float x1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[0] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[0] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[0] + (pow(t1, 3) - pow(t1, 2)) * p4[0]) / 2.f;
 		double y1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[1] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[1] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[1] + (pow(t1, 3) - pow(t1, 2)) * p4[1]) / 2.f;
 		float z1 = ((pow(t1, 3) * -1.f + 2.f * pow(t1, 2) - t1) * p1[2] + (3.f * pow(t1, 3) - 5.f * pow(t1, 2) + 2.f) * p2[2] + (-3.f * pow(t1, 3) + 4.f * pow(t1, 2) + t1) * p3[2] + (pow(t1, 3) - pow(t1, 2)) * p4[2]) / 2.f;
-
-
+	
+		
 		int radi;
 
 		if (j == 100) {
@@ -625,8 +542,8 @@ GLvoid DrawCar(int j, int c, int num)
 			float *s3 = ctrlpoints[(tmp + count - 1) % count];
 			float *s4 = ctrlpoints[(tmp + count - 0) % count];
 
-			float k = 0 / 100.f;
-
+			float k = 1 / 100.f;
+			
 			float x2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[0] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[0] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + k) * s3[0] + (pow(k, 3) - pow(k, 2)) * s4[0]) / 2.f;
 			double y2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[1] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[1] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + k) * s3[1] + (pow(k, 3) - pow(k, 2)) * s4[1]) / 2.f;
 			float z2 = ((pow(k, 3) * -1.f + 2.f * pow(k, 2) - k) * s1[2] + (3.f * pow(k, 3) - 5.f * pow(k, 2) + 2.f) * s2[2] + (-3.f * pow(k, 3) + 4.f * pow(k, 2) + t) * s3[2] + (pow(k, 3) - pow(k, 2)) * s4[2]) / 2.f;
@@ -638,16 +555,7 @@ GLvoid DrawCar(int j, int c, int num)
 		float rad1 = GetDegree(x1, z1, x, z);
 
 
-		if (radi < 0) {
-			radi = -radi;
-			radi = radi % 90;
-			//radi = -radi;
-		}
-		else
-			radi = radi % 90;
-
-		if (j >90)
-			radi = 2;
+	
 		glPushMatrix();
 		Roll.Init();
 		Roll.CenterEye(x1, y1 + 20, z1);
@@ -655,20 +563,19 @@ GLvoid DrawCar(int j, int c, int num)
 		//Roll.rotateEye(0, rad1, 0);
 		glTranslatef(x, y, z);
 
-		//	glRotatef(rad, 0, 0, 1);
+	//	glRotatef(rad, 0, 0, 1);
 		glPushMatrix();
-
+		
 		//if(num == 1)
 		//	glRotatef(rad1, 0, 1, 0);
 		//else if (num == 2)
 		//	glRotatef(rad1, 0, 1, 0);
 		//else if (num == 3)
-		glRotatef(rad1, 0, 1, 0);
-
-
+		glRotatef(90 - rad1, 0, 1, 0);
+	
+		
 		glPushMatrix();
-		glRotatef(-radi, 1, 0, 0);
-
+		glRotatef(radi, 1, 0, 0);
 		glutSolidCube(20);
 		glColor3f(1.0f, 0.0f, 1.0f);
 		glutWireCube(21);
@@ -679,13 +586,15 @@ GLvoid DrawCar(int j, int c, int num)
 		glColor3f(1.f, 1.f, 0.f);
 		glBegin(GL_POINTS);
 		glVertex3f(x, y, z);
-		glVertex3f(x1, y1, z1);
+		glVertex3f(x1,y1 ,z1);
 		glEnd();
 		glPopMatrix();
 
 	}
 	glPopMatrix();
 }
+
+
 
 static int checkCar = 0;
 static int nextStage = 0;
