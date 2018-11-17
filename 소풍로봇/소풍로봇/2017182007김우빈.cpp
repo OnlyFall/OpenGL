@@ -154,6 +154,12 @@ void SetupRC()
 	camera.rotateEye(0, 40, 0);
 	topView.rotateEye(0, 90, 0);
 	FrontView.moveEye(0, 0, 100);
+
+	for (int i = 0; i < 2; ++i) {
+		robot[i].x = rand() % 300 - 150;
+		robot[i].z = rand() % 300 - 150;
+		robot[i].seeDir = rand() % 4 + 1;
+	}
 	Roll.Init();
 }
 
@@ -596,6 +602,30 @@ GLvoid DrawCar(int j, int c, int num)
 
 
 
+
+GLvoid DrawRobot(int i)
+{
+	glPushMatrix();
+	glTranslatef(robot[i].x, robot[i].y, robot[i].z);
+	
+	if(robot[i].seeDir == 1)
+		glRotatef(90, 0, 1, 0);
+	else if(robot[i].seeDir == 2)
+		glRotatef(180, 0, 1, 0);
+	else if(robot[i].seeDir == 3)
+		glRotatef(270, 0, 1, 0);
+	else if (robot[i].seeDir == 4)
+		glRotatef(0, 0, 1, 0);
+	//로봇 그리기 장소
+	RobotHead();
+	RobotMiddle();
+	RobotLeg(robot[i].roboRad);
+	RobotHand(robot[i].roboRad);
+	glPopMatrix();
+}
+
+
+
 static int checkCar = 0;
 static int nextStage = 0;
 
@@ -605,11 +635,11 @@ static int nextStage1 = 0;
 static int checkCar2 = 40;
 static int nextStage2 = 0;
 GLfloat fogColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat am[] = { 0.0f, 0.0f, 1.0f, 0.0f};
-GLfloat ambientLight[] = { 0.3f, 0.5f, 0.8f, 1.0f };
-GLfloat diffuseLight[] = { 0.25f, 0.25f, 0.25f, 0.5f };
-GLfloat specu[] = { 0.6f, 0.4f, 0.f, 1.0f };
-GLfloat gray[] = { 0.75f, 0.75f, 0.75f, 1.0f };
+GLfloat am[] = { 0.0f, 1.0f, 0.0f, 0.0f};
+GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.1f };
+GLfloat diffuseLight[] = { 0.25f, 0.25f, 0.25f, 0.6f };
+GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 0.9f };
+GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 static BOOL fogOn = TRUE;
@@ -622,7 +652,7 @@ GLvoid drawScene(GLvoid)
 
 	if (fogOn == TRUE) {
 		glEnable(GL_LIGHTING);
-		glColor3f(0.7f, 1.0f, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specu);
@@ -635,7 +665,7 @@ GLvoid drawScene(GLvoid)
 		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu);
-		glMateriali(GL_FRONT, GL_SHININESS, 128);
+		glMateriali(GL_FRONT, GL_SHININESS, 64);
 
 		/*glEnable(GL_FOG);
 		glFogf(GL_FOG_MODE, GL_LINEAR);*/
@@ -670,6 +700,9 @@ GLvoid drawScene(GLvoid)
 	for (int i = 0; i < 10; ++i) {
 		DrawTree(TreePos[i][0], TreePos[i][1], TreePos[i][2], TreePos[i][3]);
 	}
+
+	DrawRobot(0);
+	DrawRobot(1);
 
 	if(count > 2)
 		DrawTunel();
@@ -711,6 +744,9 @@ GLvoid Reshape(int w, int h)
 
 	glLoadIdentity();
 }
+
+static BOOL roboR = FALSE;
+static BOOL roboR2 = FALSE;
 
 void TimerFunction(int value)
 {
@@ -761,6 +797,70 @@ void TimerFunction(int value)
 		}
 
 	}
+
+	for (int i = 0; i < 2; ++i) {
+		if (robot[i].walk == FALSE) {
+			robot[i].roboRad += 1;
+			if (robot[i].roboRad >= 20)
+				robot[i].walk = TRUE;
+		}
+
+		else if (robot[i].walk == TRUE) {
+			robot[i].roboRad -= 1;
+			if (robot[i].roboRad <= -20)
+				robot[i].walk = FALSE;
+		}
+
+
+		if (robot[i].seeDir == 1) {
+			robot[i].x += 0.2;
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[i].x + 0.2 >= TreePos[j][0] - 20 && robot[i].x + 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
+					while(robot[i].seeDir == 1)
+						robot[i].seeDir = rand() % 4 + 1;
+			}
+			if (robot[i].x >= 180)
+				robot[i].seeDir = 2;
+		}
+
+		else if (robot[i].seeDir == 2) {
+			robot[i].z -= 0.2;
+			for (int j = 0; j < 10; ++j) {
+				if (robot[i].x - 0.2 >= TreePos[j][0] - 20 && robot[i].x - 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
+					while (robot[i].seeDir == 2)
+						robot[i].seeDir = rand() % 4 + 1;
+			}
+			if (robot[i].z <= -180)
+				robot[i].seeDir = 3;
+		}
+
+		else if (robot[i].seeDir == 3) {
+			robot[i].x -= 0.2;
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z - 0.2 >= TreePos[j][2] - 20 && robot[i].z - 0.2 <= TreePos[j][2] + 20)
+					while (robot[i].seeDir == 3)
+						robot[i].seeDir = rand() % 4 + 1;
+			}
+
+			if (robot[i].x <= -180)
+				robot[i].seeDir = 4;
+		}
+
+		else if (robot[i].seeDir == 4) {
+			robot[i].z += 0.2;
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z + 0.2 >= TreePos[j][2] - 20 && robot[i].z + 0.2 <= TreePos[j][2] + 20)
+					while (robot[i].seeDir == 4)
+						robot[i].seeDir = rand() % 4 + 1;
+			}
+			if (robot[i].z >= 180)
+				robot[i].seeDir = 1;
+		}
+	}
+
 	glutTimerFunc(10, TimerFunction, 1);
 }
 

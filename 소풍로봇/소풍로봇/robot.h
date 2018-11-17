@@ -7,13 +7,15 @@ struct Robot {
 	float y = 50;
 	float z;
 
+	float roboRad = 0;
+	int seeDir;
+
 	float rad;
 
-	BOOL walk;
+	BOOL walk = FALSE;
 };
 
-static Robot robot;
-
+static Robot robot[2];
 
 GLvoid RobotMiddle()
 {
@@ -54,7 +56,7 @@ GLvoid RobotHand(int rad)
 	glTranslatef(10, 0, 0);
 	glTranslatef(0, -15, 0);
 	glTranslatef(0, 15, 0);
-	glRotatef(rad, 1, 0, 0);
+	glRotatef(-rad, 1, 0, 0);
 	glRotatef(10, 0, 0, 1);
 	glTranslatef(0, -15, 0);
 	glScalef(0.5, 2, 0.5);
@@ -65,7 +67,7 @@ GLvoid RobotHand(int rad)
 	glTranslatef(-10, 0, 0);
 	glTranslatef(0, -15, 0);
 	glTranslatef(0, 15, 0);
-	glRotatef(-rad, 1, 0, 0);
+	glRotatef(rad, 1, 0, 0);
 	glRotatef(-10, 0, 0, 1);
 	glTranslatef(0, -15, 0);
 	glScalef(0.5, 2, 0.5);
