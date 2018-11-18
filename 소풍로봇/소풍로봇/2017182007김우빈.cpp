@@ -178,7 +178,9 @@ void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백 함수
 	glutKeyboardFunc(Keyboard); // 키보드 입력 콜백 함수
 	glutTimerFunc(100, TimerFunction, 1); // 타이머 콜백 함수
+
 	glutSpecialFunc(SpecialKeys);
+
 	glutMainLoop(); // 이벤트 루프 실행하기
 }
 	
@@ -622,6 +624,20 @@ GLvoid DrawRobot(int i)
 	RobotLeg(robot[i].roboRad);
 	RobotHand(robot[i].roboRad);
 	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(robot[i].x, robot[i].y, robot[i].z);
+	if(robot[i].seeDir == 1)
+		glRotatef(90, 0, 1, 0);
+	else if (robot[i].seeDir == 2)
+		glRotatef(180, 0, 1, 0);
+	else if (robot[i].seeDir == 3)
+		glRotatef(270, 0, 1, 0);
+	else if (robot[i].seeDir == 4)
+		glRotatef(0, 0, 1, 0);
+	glTranslatef(-robot[i].x, -robot[i].y, -robot[i].z);
+	korea(i);
+	glPopMatrix();
 }
 
 
@@ -812,52 +828,88 @@ void TimerFunction(int value)
 		}
 
 
-		if (robot[i].seeDir == 1) {
-			robot[i].x += 0.2;
+		if (crashCheck == FALSE) {
+			if (robot[i].seeDir == 1) {
 
-			for (int j = 0; j < 10; ++j) {
-				if (robot[i].x + 0.2 >= TreePos[j][0] - 20 && robot[i].x + 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
-					while(robot[i].seeDir == 1)
-						robot[i].seeDir = rand() % 4 + 1;
-			}
-			if (robot[i].x >= 180)
-				robot[i].seeDir = 2;
-		}
+				for (int j = 0; j < 10; ++j) {
+					if (robot[i].x + 0.2 >= TreePos[j][0] - 20 && robot[i].x + 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
+						while (robot[i].seeDir == 1)
+							robot[i].seeDir = rand() % 4 + 1;
+				}
+				if (robot[i].x >= 180)
+					robot[i].seeDir = 2;
+				robot[i].x += 0.2;
 
-		else if (robot[i].seeDir == 2) {
-			robot[i].z -= 0.2;
-			for (int j = 0; j < 10; ++j) {
-				if (robot[i].x - 0.2 >= TreePos[j][0] - 20 && robot[i].x - 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
-					while (robot[i].seeDir == 2)
-						robot[i].seeDir = rand() % 4 + 1;
-			}
-			if (robot[i].z <= -180)
-				robot[i].seeDir = 3;
-		}
 
-		else if (robot[i].seeDir == 3) {
-			robot[i].x -= 0.2;
+				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+					crashCheck = TRUE;
 
-			for (int j = 0; j < 10; ++j) {
-				if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z - 0.2 >= TreePos[j][2] - 20 && robot[i].z - 0.2 <= TreePos[j][2] + 20)
-					while (robot[i].seeDir == 3)
-						robot[i].seeDir = rand() % 4 + 1;
+				if (robot[i].seeDir != 1)
+					robot[i].x -= 0.4;
+
 			}
 
-			if (robot[i].x <= -180)
-				robot[i].seeDir = 4;
-		}
+			else if (robot[i].seeDir == 2) {
 
-		else if (robot[i].seeDir == 4) {
-			robot[i].z += 0.2;
+				for (int j = 0; j < 10; ++j) {
+					if (robot[i].x - 0.2 >= TreePos[j][0] - 20 && robot[i].x - 0.2 <= TreePos[j][0] + 20 && robot[i].z >= TreePos[j][2] - 20 && robot[i].z <= TreePos[j][2] + 20)
+						while (robot[i].seeDir == 2)
+							robot[i].seeDir = rand() % 4 + 1;
+				}
+				if (robot[i].z <= -180)
+					robot[i].seeDir = 3;
+				robot[i].z -= 0.2;
 
-			for (int j = 0; j < 10; ++j) {
-				if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z + 0.2 >= TreePos[j][2] - 20 && robot[i].z + 0.2 <= TreePos[j][2] + 20)
-					while (robot[i].seeDir == 4)
-						robot[i].seeDir = rand() % 4 + 1;
+
+				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+					crashCheck = TRUE;
+
+				if (robot[i].seeDir != 2)
+					robot[i].z += 0.4;
 			}
-			if (robot[i].z >= 180)
-				robot[i].seeDir = 1;
+
+			else if (robot[i].seeDir == 3) {
+
+
+				for (int j = 0; j < 10; ++j) {
+					if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z - 0.2 >= TreePos[j][2] - 20 && robot[i].z - 0.2 <= TreePos[j][2] + 20)
+						while (robot[i].seeDir == 3)
+							robot[i].seeDir = rand() % 4 + 1;
+				}
+
+				if (robot[i].x <= -180)
+					robot[i].seeDir = 4;
+
+				robot[i].x -= 0.2;
+
+
+				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+					crashCheck = TRUE;
+
+				if (robot[i].seeDir != 3)
+					robot[i].x += 0.4;
+			}
+
+			else if (robot[i].seeDir == 4) {
+
+
+				for (int j = 0; j < 10; ++j) {
+					if (robot[i].x >= TreePos[j][0] - 20 && robot[i].x <= TreePos[j][0] + 20 && robot[i].z + 0.2 >= TreePos[j][2] - 20 && robot[i].z + 0.2 <= TreePos[j][2] + 20)
+						while (robot[i].seeDir == 4)
+							robot[i].seeDir = rand() % 4 + 1;
+				}
+
+
+				if (robot[i].z >= 180)
+					robot[i].seeDir = 1;
+				robot[i].z += 0.2;
+
+				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+					crashCheck = TRUE;
+
+				if (robot[i].seeDir != 4)
+					robot[i].z -= 0.4;
+			}
 		}
 	}
 
@@ -915,6 +967,27 @@ void Keyboard(unsigned char key, int x, int y)
 	case 'd':
 		camera.moveEye(1, 0, 0);
 		break;
+
+	case 't':
+	case 'T':
+		robot[1].seeDir = 2;
+		break;
+
+	case 'f':
+	case 'F':
+		robot[1].seeDir = 3;
+		break;
+
+	case 'g':
+	case 'G':
+		robot[1].seeDir = 4;
+		break;
+
+	case 'h':
+	case 'H':
+		robot[1].seeDir = 1;
+		break;
+
 	case '+':
 		camera.moveEye(0, 0, 1);
 		break;
@@ -1076,11 +1149,20 @@ void Motion(int x, int y)
 		Wall[select][0] = x - 400;
 		Wall[select][2] = -(300 - 1 - y);
 	}
-	glutPostRedisplay();
+	glutPostRedisplay();  
 }
 
 
 void SpecialKeys(int key, int x, int y) {
 
+	if (key == GLUT_KEY_DOWN)
+		robot[0].seeDir = 4;
+
+	else if (key == GLUT_KEY_UP)
+		robot[0].seeDir = 2;
+	else if (key == GLUT_KEY_RIGHT)
+		robot[0].seeDir = 1;
+	else if (key == GLUT_KEY_LEFT)
+		robot[0].seeDir = 3;
 	glutPostRedisplay();
 }
