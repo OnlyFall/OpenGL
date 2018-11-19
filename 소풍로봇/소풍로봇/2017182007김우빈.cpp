@@ -650,12 +650,13 @@ static int nextStage1 = 0;
 
 static int checkCar2 = 40;
 static int nextStage2 = 0;
-GLfloat fogColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat am[] = { 0.0f, 1.0f, 0.0f, 0.0f};
-GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.1f };
-GLfloat diffuseLight[] = { 0.25f, 0.25f, 0.25f, 0.6f };
-GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 0.9f };
-GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+GLfloat fogColor[] = { 1.0f, 1.0f, 1.0f, 0.2f };
+GLfloat am[] = { 0.0f, 300.0f, 0.0f, 1.0f};
+//GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
+GLfloat ambientLignt[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+GLfloat diffuseLight[] = { 0.25f, 0.25f, 0.25f, 0.2f };
+GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 0.1f };
+GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
 
 static BOOL fogOn = TRUE;
@@ -669,11 +670,14 @@ GLvoid drawScene(GLvoid)
 	if (fogOn == TRUE) {
 		glEnable(GL_LIGHTING);
 		glColor3f(1.0f, 1.0f, 1.0f);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
+		glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
+		glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
+
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specu);
 		glLightfv(GL_LIGHT0, GL_POSITION, am);
-		glEnable(GL_LIGHT0);
 
 		glEnable(GL_COLOR_MATERIAL);
 
@@ -682,6 +686,10 @@ GLvoid drawScene(GLvoid)
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
+		
+		glEnable(GL_LIGHT0);
+
+		
 
 		/*glEnable(GL_FOG);
 		glFogf(GL_FOG_MODE, GL_LINEAR);*/
@@ -690,6 +698,7 @@ GLvoid drawScene(GLvoid)
 		glDisable(GL_FOG);
 		glDisable(GL_LIGHT0);
 	}
+
 	glPushMatrix();
 
 
