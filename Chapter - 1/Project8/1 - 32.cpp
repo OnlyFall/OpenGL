@@ -1,8 +1,7 @@
-#include <gl/freeglut.h>
+#include <GL/freeglut.h>
 #include <stdlib.h>
 #include <random>
 #include <stdio.h>
-#include <gl\freeglut.h>
 #include <math.h>
 GLvoid drawScene(GLvoid);
 void TimerFunction(int value);
@@ -11,6 +10,7 @@ GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
 void SpecialKeys(int key, int x, int y);
 static int mode = 1;
+
 
 static float cycleRad = 200;
 
@@ -259,7 +259,9 @@ GLvoid DrawRight2(float x, float y, float z)
 
 GLvoid drawPyramid(float x, float z)
 {
-	glPushMatrix();
+	glEnable(GL_CCW);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_AUTO_NORMAL);
 	glPushMatrix();
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_POLYGON);
@@ -274,39 +276,43 @@ GLvoid drawPyramid(float x, float z)
 	glPushMatrix();
 	
 	glBegin(GL_POLYGON);
-	glNormal3f(0.0, 1.0, 0.0);
+	glNormal3f((0 * 25) - (50 * 45), (0 * 25) - (50 * -25), (0 * 45) - (0 * -25));
 	glVertex3f(x + 25, 5, z - 25);
 	glVertex3f(x + 25, 5,z + 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glNormal3f((0 * -50) - (-50 * 45), (0 * -50) - (-50 * 25), (0 * 45) - (0 * 25));
 	glVertex3f(x - 25, 5, z + 25);
 	glVertex3f(x - 25, 5, z - 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glNormal3f((0 * 25) - (0 * 45), (-50 * 25) - (0 * -25), (-50 * 45) - (0 * -25));
 	glVertex3f(x + 25, 5, z - 25);
 	glVertex3f(x - 25, 5, z - 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glNormal3f((0 * -25) - (0 * 45), (50 * -25) - (0 * 25), (50 * 45) - (0 * 25));
 	glVertex3f(x - 25, 5, z + 25);
 	glVertex3f(x + 25, 5, z + 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 	glPopMatrix();
-	glPopMatrix();
 }
 
+static BOOL culling = TRUE;
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+
 
 
 	glPushMatrix();
@@ -360,8 +366,6 @@ GLvoid drawScene(GLvoid)
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray1);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu1);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
-
-		glMaterialfv(GL_BACK, GL_SPECULAR, 0);
 
 		glEnable(GL_LIGHT1);
 	}
