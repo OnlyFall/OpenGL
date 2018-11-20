@@ -669,7 +669,7 @@ GLvoid drawScene(GLvoid)
 
 	if (fogOn == TRUE) {
 		glEnable(GL_LIGHTING);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		//glColor3f(1.0f, 1.0f, 1.0f);
 		//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
 		glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
