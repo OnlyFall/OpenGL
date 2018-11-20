@@ -31,6 +31,7 @@ static point_3 spherePos;
 static BOOL start = FALSE;
 static BOOL bCrash = FALSE;
 static BOOL goaway = FALSE;
+static BOOL vectorOn = FALSE;
 
 GLdouble result[16] = { 0 };
 GLdouble Identity[16] = {
@@ -182,21 +183,50 @@ struct rightPos {
 };
 
 static rightPos rp[2];
+static rightPos moon;
+
+GLfloat am[] = { -50, 100, 0, 1.0f };
+//GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
+GLfloat ambientLignt[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+GLfloat diffuseLight[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 0.1f };
+
+GLfloat am1[] = { 50.0f, 100.0f, 0.0f, 1.0f };
+//GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
+GLfloat ambientLignt1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+GLfloat diffuseLight1[] = { 0.0f, 1.0f, 1.0f, 1.0f };
+GLfloat specu1[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat gray1[] = { 0.25f, 0.25f, 0.25f, 0.1f };
+
 
 void SetupRC()
 {
 	camera.rotateEye(0, 0, 0);
 	spherePos.y = 300;
 
-	rp[0].x = -50;
 	rp[0].y = 50;
-	rp[0].z = 0;
-	rp[0].rad = 180;
+	rp[0].rad = 30;
+	rp[0].x = 50 * cos(3.141592 / 180.f * rp[0].rad);
+	rp[0].z = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
-	rp[1].x = 50;
+	am[0] = rp[0].x;
+	am[1] = rp[0].y;
+	am[2] = rp[0].z;
+
 	rp[1].y = 50;
-	rp[1].z = 0;
-	rp[1].rad = 0;
+	rp[1].rad = 330;
+	rp[1].x = 50 * cos(3.141592 / 180.f * rp[1].rad);
+	rp[1].z = 50 * sin(3.141592 / 180.f * rp[1].rad);
+	
+	am1[0] = rp[1].x;
+	am1[1] = rp[1].y;
+	am1[2] = rp[1].z;
+
+	moon.rad = 0;
+	moon.x = 50;
+	moon.y = 50;
+	moon.z = 0;
 
 }
 
@@ -224,19 +254,6 @@ void main(int agrc, char *argv[]) { // 윈도우 초기화 및 생성
 }
 
 
-GLfloat am[] = { -50, 100, 0, 1.0f };
-//GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
-GLfloat ambientLignt[] = { 0.0f, 1.0f, 0.0f, 1.0f };
-GLfloat diffuseLight[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 0.1f };
-
-GLfloat am1[] = { 50.0f, 100.0f, 0.0f, 1.0f };
-//GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
-GLfloat ambientLignt1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-GLfloat diffuseLight1[] = { 0.0f, 1.0f, 1.0f, 1.0f };
-GLfloat specu1[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat gray1[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
 
 GLvoid DrawRight1(float x, float y, float z)
@@ -257,11 +274,24 @@ GLvoid DrawRight2(float x, float y, float z)
 	glPopMatrix();
 }
 
+GLvoid DrawMoon(float x, float y, float z)
+{
+	glPushMatrix();
+	glTranslatef(x, y, z);
+	glutSolidSphere(15, 15, 15);
+	glPopMatrix();
+}
+
 GLvoid drawPyramid(float x, float z)
 {
+	glShadeModel(GL_SMOOTH);
 	glEnable(GL_CCW);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_AUTO_NORMAL);
+
+	if (vectorOn == FALSE) {
+		glEnable(GL_NORMALIZE);
+		glEnable(GL_AUTO_NORMAL);
+	}
+
 	glPushMatrix();
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_POLYGON);
@@ -276,28 +306,33 @@ GLvoid drawPyramid(float x, float z)
 	glPushMatrix();
 	
 	glBegin(GL_POLYGON);
-	glNormal3f((0 * 25) - (50 * 45), (0 * 25) - (50 * -25), (0 * 45) - (0 * -25));
+	if (vectorOn == FALSE)
+		glNormal3f((0 * -50) - (-50 * 45), (0 * -50) - (-50 * 25), (0 * 45) - (0 * 25));
 	glVertex3f(x + 25, 5, z - 25);
-	glVertex3f(x + 25, 5,z + 25);
+	glVertex3f(x + 25, 5, z + 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
 	glBegin(GL_POLYGON);
-	glNormal3f((0 * -50) - (-50 * 45), (0 * -50) - (-50 * 25), (0 * 45) - (0 * 25));
+	if (vectorOn == FALSE)
+		glNormal3f((0 * 25) - (50 * 45), (0 * 25) - (50 * -25), (0 * 45) - (0 * -25));
 	glVertex3f(x - 25, 5, z + 25);
 	glVertex3f(x - 25, 5, z - 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
+
 	glBegin(GL_POLYGON);
-	glNormal3f((0 * 25) - (0 * 45), (-50 * 25) - (0 * -25), (-50 * 45) - (0 * -25));
+	if (vectorOn == FALSE)
+		glNormal3f((0 * 25) - (0 * 45), (-50 * 25) - (0 * -25), (-50 * 45) - (0 * -25));
 	glVertex3f(x + 25, 5, z - 25);
 	glVertex3f(x - 25, 5, z - 25);
 	glVertex3f(x, 50, z);
 	glEnd();
 
 	glBegin(GL_POLYGON);
-	glNormal3f((0 * -25) - (0 * 45), (50 * -25) - (0 * 25), (50 * 45) - (0 * 25));
+	if (vectorOn == FALSE)
+		glNormal3f((0 * -25) - (0 * 45), (50 * -25) - (0 * 25), (50 * 45) - (0 * 25));
 	glVertex3f(x - 25, 5, z + 25);
 	glVertex3f(x + 25, 5, z + 25);
 	glVertex3f(x, 50, z);
@@ -317,6 +352,7 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();
 	camera.drawCamera();
+	DrawMoon(moon.x, moon.y, moon.z);
 	DrawRight1(am[0], am[1], am[2]);
 	DrawRight2(am1[0], am1[1], am1[2]);
 
@@ -329,7 +365,7 @@ GLvoid drawScene(GLvoid)
 		//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
 		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 		//glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLignt);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specu);
 		glLightfv(GL_LIGHT0, GL_POSITION, am);
@@ -338,7 +374,8 @@ GLvoid drawScene(GLvoid)
 
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
+		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
 
@@ -354,7 +391,7 @@ GLvoid drawScene(GLvoid)
 		//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
 		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 		//glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLignt1);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight1);
 		glLightfv(GL_LIGHT1, GL_SPECULAR, specu1);
 		glLightfv(GL_LIGHT1, GL_POSITION, am1);
@@ -363,7 +400,8 @@ GLvoid drawScene(GLvoid)
 
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray1);
+		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray1);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt1);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu1);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
 
@@ -379,6 +417,7 @@ GLvoid drawScene(GLvoid)
 	drawPyramid(150, 150);
 	drawPyramid(150, -150);
 	drawPyramid(-150, 150);
+	drawPyramid(0, 0);
 
 	glPopMatrix();
 	glutSwapBuffers();
@@ -419,6 +458,7 @@ void TimerFunction(int value)
 	glutPostRedisplay();
 
 	if (AUTO == TRUE) {
+
 		for (int i = 0; i < 2; ++i) {
 			rp[i].rad = (rp[i].rad + 1) % 360;
 		}
@@ -427,6 +467,11 @@ void TimerFunction(int value)
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
 		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
+
+		moon.rad = (moon.rad + 1) % 360;
+
+		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
+		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 	}
 
 	glutTimerFunc(1, TimerFunction, 100);
@@ -525,29 +570,42 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 't':
+		moon.rad = (moon.rad + 10) % 360;
+
+		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
+		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
+
 		for (int i = 0; i < 2; ++i) {
 			rp[i].rad = (rp[i].rad + 10) % 360;
 		}
 
-		am[0] = 300 * cos(3.141592 / 180.f * rp[0].rad);
-		am[2] = 300 * sin(3.141592 / 180.f * rp[0].rad);
+		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
-		am1[0] = 300 * cos(3.141592 / 180.f * rp[1].rad);
-		am1[2] = 300 * sin(3.141592 / 180.f * rp[1].rad);
+		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
+
 		break;
 
 	case 'T':
+		moon.rad -= 10;
+		if (moon.rad <= 0)
+			moon.rad = 360;
+
+		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
+		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
+		
 		for (int i = 0; i < 2; ++i) {
 			rp[i].rad -= 10;
 			if (rp[i].rad <= 0)
 				rp[i].rad = 360;
 		}
 
-		am[0] = 300 * cos(3.141592 / 180.f * rp[0].rad);
-		am[2] = 300 * sin(3.141592 / 180.f * rp[0].rad);
+		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
-		am1[0] = 300 * cos(3.141592 / 180.f * rp[1].rad);
-		am1[2] = 300 * sin(3.141592 / 180.f * rp[1].rad);
+		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
 		break;
 
 	case 'v':
@@ -595,6 +653,38 @@ void Keyboard(unsigned char key, int x, int y)
 		diffuseLight1[1] += 0.1f;
 		diffuseLight1[2] += 0.1f;
 		diffuseLight1[3] += 0.1f;
+		break;
+
+	case 'n':
+		ambientLignt[0] -= 0.1f;
+		ambientLignt[1] -= 0.1f;
+		ambientLignt[2] -= 0.1f;
+		ambientLignt[3] -= 0.1f;
+
+		ambientLignt1[0] -= 0.1f;
+		ambientLignt1[1] -= 0.1f;
+		ambientLignt1[2] -= 0.1f;
+		ambientLignt1[3] -= 0.1f;
+		break;
+
+	case 'N':
+		ambientLignt[0] += 0.1f;
+		ambientLignt[1] += 0.1f;
+		ambientLignt[2] += 0.1f;
+		ambientLignt[3] += 0.1f;
+
+		ambientLignt1[0] += 0.1f;
+		ambientLignt1[1] += 0.1f;
+		ambientLignt1[2] += 0.1f;
+		ambientLignt1[3] += 0.1f;
+		break;
+
+	case 'p':
+	case 'P':
+		if (vectorOn == FALSE)
+			vectorOn = TRUE;
+		else
+			vectorOn = FALSE;
 		break;
 
 	case 'q':
