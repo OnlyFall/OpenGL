@@ -187,15 +187,15 @@ static rightPos moon;
 
 GLfloat am[] = { -50, 100, 0, 1.0f };
 //GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
-GLfloat ambientLignt[] = { 0.0f, 1.0f, 0.0f, 1.0f };
-GLfloat diffuseLight[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+GLfloat ambientLignt[] = { 0.6f, 0.5f, 0.2f, 1.0f };
+GLfloat diffuseLight[] = { 0.6f, 0.5f, 0.2f, 1.0f };
 GLfloat specu[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat gray[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
 GLfloat am1[] = { 50.0f, 100.0f, 0.0f, 1.0f };
 //GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 0.6f };
 GLfloat ambientLignt1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-GLfloat diffuseLight1[] = { 0.0f, 1.0f, 1.0f, 1.0f };
+GLfloat diffuseLight1[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 GLfloat specu1[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat gray1[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
@@ -206,18 +206,18 @@ void SetupRC()
 	spherePos.y = 300;
 
 	rp[0].y = 50;
-	rp[0].rad = 30;
-	rp[0].x = 50 * cos(3.141592 / 180.f * rp[0].rad);
-	rp[0].z = 50 * sin(3.141592 / 180.f * rp[0].rad);
+	rp[0].rad = 180;
+	rp[0].x = 100 * cos(3.141592 / 180.f * rp[0].rad);
+	rp[0].z = 100 * sin(3.141592 / 180.f * rp[0].rad);
 
 	am[0] = rp[0].x;
 	am[1] = rp[0].y;
 	am[2] = rp[0].z;
 
 	rp[1].y = 50;
-	rp[1].rad = 330;
-	rp[1].x = 50 * cos(3.141592 / 180.f * rp[1].rad);
-	rp[1].z = 50 * sin(3.141592 / 180.f * rp[1].rad);
+	rp[1].rad = 0;
+	rp[1].x = 100 * cos(3.141592 / 180.f * rp[1].rad);
+	rp[1].z = 100 * sin(3.141592 / 180.f * rp[1].rad);
 	
 	am1[0] = rp[1].x;
 	am1[1] = rp[1].y;
@@ -365,7 +365,7 @@ GLvoid drawScene(GLvoid)
 		//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
 		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 		//glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLignt);
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLignt);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specu);
 		glLightfv(GL_LIGHT0, GL_POSITION, am);
@@ -374,8 +374,8 @@ GLvoid drawScene(GLvoid)
 
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
-		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt);
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray);
+		//glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
 
@@ -391,7 +391,7 @@ GLvoid drawScene(GLvoid)
 		//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLignt);
 		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 		//glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-		glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLignt1);
+		//glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLignt1);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight1);
 		glLightfv(GL_LIGHT1, GL_SPECULAR, specu1);
 		glLightfv(GL_LIGHT1, GL_POSITION, am1);
@@ -400,8 +400,8 @@ GLvoid drawScene(GLvoid)
 
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		// 이후에 나오는 모든 재질은 밝게 빛나는 완전 전반사 반사율을 갖는다.
-		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray1);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt1);
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, gray1);
+		//glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLignt1);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specu1);
 		glMateriali(GL_FRONT, GL_SHININESS, 64);
 
@@ -459,14 +459,14 @@ void TimerFunction(int value)
 
 	if (AUTO == TRUE) {
 
-		for (int i = 0; i < 2; ++i) {
+	/*	for (int i = 0; i < 2; ++i) {
 			rp[i].rad = (rp[i].rad + 1) % 360;
 		}
 		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
 		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
-		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);*/
 
 		moon.rad = (moon.rad + 1) % 360;
 
@@ -575,15 +575,15 @@ void Keyboard(unsigned char key, int x, int y)
 		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 
-		for (int i = 0; i < 2; ++i) {
-			rp[i].rad = (rp[i].rad + 10) % 360;
-		}
+		//for (int i = 0; i < 2; ++i) {
+		//	rp[i].rad = (rp[i].rad + 10) % 360;
+		//}
 
-		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+	/*	am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
 		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
-		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);*/
 
 		break;
 
@@ -595,17 +595,17 @@ void Keyboard(unsigned char key, int x, int y)
 		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 		
-		for (int i = 0; i < 2; ++i) {
-			rp[i].rad -= 10;
-			if (rp[i].rad <= 0)
-				rp[i].rad = 360;
-		}
+		//for (int i = 0; i < 2; ++i) {
+		//	rp[i].rad -= 10;
+		//	if (rp[i].rad <= 0)
+		//		rp[i].rad = 360;
+		//}
 
-		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+	/*	am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
 		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
-		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);*/
 		break;
 
 	case 'v':
@@ -685,6 +685,14 @@ void Keyboard(unsigned char key, int x, int y)
 			vectorOn = TRUE;
 		else
 			vectorOn = FALSE;
+		break;
+
+	case 'O':
+
+		break;
+
+	case 'o':
+
 		break;
 
 	case 'q':
