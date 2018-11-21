@@ -376,7 +376,7 @@ GLvoid DrawBottom(GLfloat x, GLfloat z)
 	glEnd();
 	
 }
-
+static BOOL snowOn = TRUE;
 static BOOL culling = TRUE;
 GLvoid drawScene(GLvoid)
 {
@@ -481,7 +481,8 @@ GLvoid drawScene(GLvoid)
 	tmpx = 0;
 	tmpy = 0;
 
-	wearherSnow();
+	if(snowOn == TRUE)
+		wearherSnow();
 
 	glPopMatrix();
 	glutSwapBuffers();
@@ -517,6 +518,7 @@ static int sphereRad = 0;
 
 static BOOL AUTO = FALSE;
 
+
 void TimerFunction(int value)
 {
 	glutPostRedisplay();
@@ -538,21 +540,23 @@ void TimerFunction(int value)
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 	}
 
-	for (int i = 0; i < 100; ++i) {
-		snow[i].y -= 2;
-		if (snow[i].y < 0) {
-			snow[i].y = rand() % 300 + 100;
-			snow[i].x = rand() % 400 - 200;
-			snow[i].z = rand() % 400 - 200;
+	if (snowOn == TRUE) {
+		for (int i = 0; i < 100; ++i) {
+			snow[i].y -= 2;
+			if (snow[i].y < 0) {
+				snow[i].y = rand() % 300 + 100;
+				snow[i].x = rand() % 400 - 200;
+				snow[i].z = rand() % 400 - 200;
 
-			int tmpx = snow[i].x + 200;
-			int tmpz = snow[i].z + 200;
+				int tmpx = snow[i].x + 200;
+				int tmpz = snow[i].z + 200;
 
-			if (bottomSpecu1[tmpx][tmpz][0] < 1.0f) {
-				bottomSpecu1[tmpx][tmpz][0] += 0.1f;
-				bottomSpecu1[tmpx][tmpz][1] += 0.1f;
-				bottomSpecu1[tmpx][tmpz][2] += 0.1f;
-				bottomSpecu1[tmpx][tmpz][3] += 0.1f;
+				if (bottomSpecu1[tmpx][tmpz][0] < 1.0f) {
+					bottomSpecu1[tmpx][tmpz][0] += 0.1f;
+					bottomSpecu1[tmpx][tmpz][1] += 0.1f;
+					bottomSpecu1[tmpx][tmpz][2] += 0.1f;
+					bottomSpecu1[tmpx][tmpz][3] += 0.1f;
+				}
 			}
 		}
 	}
@@ -643,6 +647,7 @@ void Keyboard(unsigned char key, int x, int y)
 		else
 			right2 = FALSE;
 		break;
+
 
 	case 'r':
 	case 'R':
@@ -808,7 +813,11 @@ void Mouse(int button, int state, int x, int y)
 }
 
 void SpecialKeys(int key, int x, int y) {
-	if (key == GLUT_KEY_SHIFT_L)
-		start = TRUE;
+	if (key == GLUT_KEY_SHIFT_L) {
+		if (snowOn == TRUE)
+			snowOn = FALSE;
+		else
+			snowOn = TRUE;
+	}
 	glutPostRedisplay();
 }
