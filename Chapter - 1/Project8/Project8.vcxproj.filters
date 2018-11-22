@@ -108,6 +108,9 @@
     <ClCompile Include="1 - 33.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="1 - 34.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KeyBoard.h">
