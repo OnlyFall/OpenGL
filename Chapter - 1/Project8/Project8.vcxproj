@@ -228,6 +228,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="effect.h" />
     <ClInclude Include="KeyBoard.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="weather.h" />

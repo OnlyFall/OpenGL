@@ -5,6 +5,7 @@
 #include <math.h>
 #include "weather.h"
 #include "Robot.h"
+#include "effect.h"
 
 GLvoid drawScene(GLvoid);
 void TimerFunction(int value);
@@ -16,7 +17,7 @@ static int mode = 1;
 
 
 static float cycleRad = 200;
-
+static Effect effect[10];
 
 struct point_3 {
 	float x = 0;
@@ -209,9 +210,15 @@ GLfloat bottomDiffuseLight1[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 GLfloat bottomSpecu1[400][400][4] = { 0.1f, 0.1f, 0.1f, 0.1f };
 GLfloat bottomGray1[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
+GLfloat am3[] = { robot.x, robot.y + 90, robot.z, 1.0f };
+GLfloat ambientLignt3[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+GLfloat diffuseLight3[] = { 1.0f, 0.0f, 1.0f, 1.0f };
+GLfloat specu3[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat gray3[] = { 0.25f, 0.25f, 0.25f, 0.1f };
 
 void SetupRC()
 {
+	robot.x = -75;
 	camera.rotateEye(0, 0, 0);
 	spherePos.y = 300;
 
@@ -382,8 +389,22 @@ GLvoid DrawBottom(GLfloat x, GLfloat z)
 	glEnd();
 
 }
+
+GLvoid drawEffect()
+{
+	for (int i = 0; i < 10; ++i) {
+		glPushMatrix();
+		glTranslatef(effect[i].x, effect[i].y, effect[i].z);
+		glutSolidSphere(5, 5, 5);
+		glPopMatrix();
+	}
+}
+
+
 static BOOL snowOn = TRUE;
 static BOOL culling = TRUE;
+static BOOL crash = FALSE;
+
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
@@ -465,6 +486,9 @@ GLvoid drawScene(GLvoid)
 	drawPyramid(150, -150);
 	drawPyramid(-150, 150);
 	drawPyramid(0, 0);
+
+	if (crash == TRUE)
+		drawEffect();
 	glDisable(GL_COLOR_MATERIAL);
 
 
@@ -491,6 +515,18 @@ GLvoid drawScene(GLvoid)
 		wearherSnow();
 	
 	glPushMatrix();
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuseLight3);
+	glLightfv(GL_LIGHT2, GL_SPECULAR, specu3);
+	glLightfv(GL_LIGHT2, GL_POSITION, am3);
+
+	GLfloat direction[] = { 0, -1, 0 };
+	GLfloat temp = 45;
+	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, direction);
+	glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 25.f);
+
+	glEnable(GL_LIGHT2);
+
+
 	glTranslatef(robot.x, robot.y, robot.z);
 	glRotatef(seeDir, 0, 1, 0);
 	//로봇 그리기 장소
@@ -590,6 +626,69 @@ void TimerFunction(int value)
 		if (roboRad <= -20)
 			roboR = FALSE;
 	}
+
+	if (crash == TRUE) {
+		if (effect[0].dir == 1) {
+			for (int i = 0; i < 10; ++i) {
+				effect[i].x += 5;
+				effect[i].y = cos(3.141592 / 180.f * (36 * i)) * effect[0].count + 50;
+				effect[i].z = sin(3.141592 / 180.f * (36 * i)) * effect[0].count;
+			}
+			effect[0].count += 1;
+
+			if (effect[0].count == 100) {
+				crash = FALSE;
+				effect[0].count = 0;
+			}
+		}
+
+		else if (effect[0].dir == 2) {
+			for (int i = 0; i < 10; ++i) {
+				effect[i].x -= 5;
+				effect[i].y = cos(3.141592 / 180.f * (36 * i)) * effect[0].count + 50;
+				effect[i].z = sin(3.141592 / 180.f * (36 * i)) * effect[0].count;
+			}
+			effect[0].count += 1;
+
+			if (effect[0].count == 100) {
+				crash = FALSE;
+				effect[0].count = 0;
+			}
+		}
+
+		else if (effect[0].dir == 3) {
+			for (int i = 0; i < 10; ++i) {
+				effect[i].x = sin(3.141592 / 180.f * (36 * i)) * effect[0].count;
+				effect[i].y = cos(3.141592 / 180.f * (36 * i)) * effect[0].count + 50;
+				effect[i].z -= 5;
+			}
+			effect[0].count += 1;
+
+			if (effect[0].count == 100) {
+				crash = FALSE;
+				effect[0].count = 0;
+			}
+		}
+
+		else if (effect[0].dir == 4) {
+			for (int i = 0; i < 10; ++i) {
+				effect[i].x = sin(3.141592 / 180.f * (36 * i)) * effect[0].count;
+				effect[i].y = cos(3.141592 / 180.f * (36 * i)) * effect[0].count + 50;
+				effect[i].z += 5;
+			}
+			effect[0].count += 1;
+
+			if (effect[0].count == 100) {
+				crash = FALSE;
+				effect[0].count = 0;
+			}
+		}
+	}
+
+	am3[0] = robot.x;
+	am3[1] = robot.y + 70;
+	am3[2] = robot.z;
+
 	glutTimerFunc(1, TimerFunction, 100);
 }
 
@@ -846,49 +945,181 @@ void SpecialKeys(int key, int x, int y) {
 	if (key == GLUT_KEY_UP) {
 		if (robot.z > -180)
 			robot.z -= 1;
-		if (robot.z < -110 && robot.x > 130)
+		if (robot.z < -125 && robot.x > 125) {
 			robot.z += 1;
-		if (robot.x < -110 && robot.z < -110)
+			crash = TRUE;
+			effect[0].dir = 4;
+
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+
+		if (robot.x < -125 && robot.z < -125) {
 			robot.z += 1;
+			crash = TRUE;
+			effect[0].dir = 4;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+
+		if (robot.x > -25 && robot.x < 25 && robot.z > -25 && robot.z < 25) {
+			robot.z += 4;
+			crash = TRUE;
+			effect[0].dir = 4;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
 
 		seeDir = 0;
-		printf("(x : %f, z : %f) \n", robot.x, robot.z);
 	}
 
 	if (key == GLUT_KEY_DOWN) {
-		if (robot.z < 180)
+		if (robot.z < 180) {
 			robot.z += 1;
-		if (robot.z > 126 && robot.x < -110)
-			robot.z -= 1;
-		if (robot.x > 130 && robot.z > 140)
-			robot.z -= 1;
+			if (robot.z > 125 && robot.x < -125) {
+				robot.z -= 1;
+				effect[0].dir = 3;
+				if (effect[0].count == 0) {
+					for (int i = 0; i < 10; ++i) {
+						effect[i].x = robot.x;
+						effect[i].y = robot.y + 50;
+						effect[i].z = robot.z;
+					}
+				}
+			}
+			if (robot.x > 125 && robot.z > 125) {
+				robot.z -= 1;
+				crash = TRUE;
+				effect[0].dir = 3;
+				if (effect[0].count == 0) {
+					for (int i = 0; i < 10; ++i) {
+						effect[i].x = robot.x;
+						effect[i].y = robot.y + 50;
+						effect[i].z = robot.z;
+					}
+				}
+			}
 
-		seeDir = 180;
-		printf("(x : %f, z : %f) \n", robot.x, robot.z);
+			if (robot.x > -25 && robot.x < 25 && robot.z > -25 && robot.z < 25) {
+				robot.z -= 3;
+				crash = TRUE;
+				effect[0].dir = 3;
+				if (effect[0].count == 0) {
+					for (int i = 0; i < 10; ++i) {
+						effect[i].x = robot.x;
+						effect[i].y = robot.y + 50;
+						effect[i].z = robot.z;
+					}
+				}
+			}
+
+			seeDir = 180;
+
+		}
 	}
+
 
 	if (key == GLUT_KEY_LEFT) {
 		if (robot.x > -180)
 			robot.x -= 1;
-		if (robot.z > 126 && robot.x < -110)
+		if (robot.z > 125 && robot.x < -125) {
 			robot.x += 1;
-		if (robot.x < -110 && robot.z < -110)
+			crash = TRUE;
+			effect[0].dir = 1;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+		if (robot.x < -125 && robot.z < -125) {
 			robot.x += 1;
+			crash = TRUE;
+			effect[0].dir = 1;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+
+		if (robot.x > -25 && robot.x < 25 && robot.z > -25 && robot.z < 25) {
+			robot.x += 1;
+			crash = TRUE;
+			effect[0].dir = 1;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
 
 		seeDir = 270;
-		printf("(x : %f, z : %f) \n", robot.x, robot.z);
 	}
 
 	if (key == GLUT_KEY_RIGHT) {
 		if (robot.x < 180)
 			robot.x += 1;
-		if (robot.x > 130 && robot.z > 140)
+		if (robot.x > 125 && robot.z > 125) {
 			robot.x -= 1;
-		if (robot.z < -110 && robot.x > 130)
+			crash = TRUE;
+			effect[0].dir = 2;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+		if (robot.z < -125 && robot.x > 125) {
 			robot.x -= 1;
+			crash = TRUE;
+			effect[0].dir = 2;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
+
+		if (robot.x > -25 && robot.x < 25 && robot.z > -25 && robot.z < 25) {
+			robot.x -= 1;
+			crash = TRUE;
+			effect[0].dir = 2;
+			if (effect[0].count == 0) {
+				for (int i = 0; i < 10; ++i) {
+					effect[i].x = robot.x;
+					effect[i].y = robot.y + 50;
+					effect[i].z = robot.z;
+				}
+			}
+		}
 
 		seeDir = 90;
-		printf("(x : %f, z : %f) \n", robot.x, robot.z);
 	}
 	glutPostRedisplay();
 }
