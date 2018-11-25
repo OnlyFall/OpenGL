@@ -603,7 +603,8 @@ GLvoid DrawCar(int j, int c, int num)
 }
 
 
-
+int pp;
+static BOOL ppbool = FALSE;
 
 GLvoid DrawRobot(int i)
 {
@@ -636,7 +637,7 @@ GLvoid DrawRobot(int i)
 	else if (robot[i].seeDir == 4)
 		glRotatef(0, 0, 1, 0);
 	glTranslatef(-robot[i].x, -robot[i].y, -robot[i].z);
-	korea(i);
+	korea(i, pp);
 	glPopMatrix();
 }
 
@@ -776,6 +777,19 @@ static BOOL roboR2 = FALSE;
 void TimerFunction(int value)
 {
 	glutPostRedisplay();
+
+	if (ppbool == FALSE) {
+		pp -= 1;
+
+		if (pp <= -6)
+			ppbool = TRUE;
+	}
+	else if (ppbool == TRUE) {
+		pp += 1;
+		
+		if (pp >= 6)
+			ppbool = FALSE;
+	}
 
 	for (int i = 0; i < 10; ++i) {
 		if (TreePos[i][4] == 0) {

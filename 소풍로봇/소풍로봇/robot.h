@@ -88,7 +88,7 @@ GLvoid RobotHead()
 GLfloat cs[3][3][3] = { { { -200, 0, -200 },{ 0, 0, -200 },{ 200, 0, -200 } },{ { -200, 0, 0 },{ 0,350,0 },{ 200, 0, 0 } },{ { -200,0,200 },{ 0,0,200 },{ 200,0,200 } } };
 
 
-GLvoid korea(int i) // ±¹»Í!
+GLvoid korea(int i, float pp) // ±¹»Í!
 {
 	//ctrlpoints[3][3][3] = { { { robot[i].x - 10, robot[i].y + 20 , robot[i].z },{ robot[i].x, robot[i].y + 20, robot[i].z },{ robot[i].x + 10, robot[i].y + 20, robot[i].z } },{ { -200, 0, 0 },{ 0,350,0 },{ 200, 0, 0 } },{ { -200,0,200 },{ 0,0,200 },{ 200,0,200 } } };
 	cs[0][0][0] = robot[i].x - 10;
@@ -103,29 +103,29 @@ GLvoid korea(int i) // ±¹»Í!
 	cs[2][0][1] = robot[i].y;
 	cs[2][0][2] = robot[i].z - 10;
 
-	cs[0][1][0] = robot[i].x - 10;
+	cs[0][1][0] = robot[i].x - 10 + pp;
 	cs[0][1][1] = robot[i].y - 10;
-	cs[0][1][2] = robot[i].z - 10;
+	cs[0][1][2] = robot[i].z - 10 + pp;
 
-	cs[1][1][0] = robot[i].x;
+	cs[1][1][0] = robot[i].x - pp;
 	cs[1][1][1] = robot[i].y - 10;
-	cs[1][1][2] = robot[i].z - 10;
+	cs[1][1][2] = robot[i].z - 10 - pp;
 
 	cs[2][1][0] = robot[i].x + 10;
 	cs[2][1][1] = robot[i].y - 10;
 	cs[2][1][2] = robot[i].z - 10;
 
-	cs[0][2][0] = robot[i].x - 10;
+	cs[0][2][0] = robot[i].x - 10 + pp;
 	cs[0][2][1] = robot[i].y - 20;
-	cs[0][2][2] = robot[i].z - 10;
+	cs[0][2][2] = robot[i].z - 10 + pp;
 
 	cs[1][2][0] = robot[i].x;
 	cs[1][2][1] = robot[i].y - 20;
 	cs[1][2][2] = robot[i].z - 10;
 
-	cs[2][2][0] = robot[i].x + 10;
+	cs[2][2][0] = robot[i].x + 10 - pp;
 	cs[2][2][1] = robot[i].y - 20;
-	cs[2][2][2] = robot[i].z - 10;
+	cs[2][2][2] = robot[i].z - 10 - pp;
 	
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 3, 0.0, 1.0, 9, 3, &cs[0][0][0]);
