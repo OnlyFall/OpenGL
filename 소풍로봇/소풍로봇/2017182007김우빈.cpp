@@ -850,7 +850,7 @@ void TimerFunction(int value)
 				robot[i].x += 0.2;
 
 
-				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+				if (robot[0].x + 20 >= robot[1].x - 20 && robot[0].x - 20 <= robot[1].x + 20 && robot[0].z - 20 <= robot[1].z + 20 && robot[0].z + 20 >= robot[1].z - 20)
 					crashCheck = TRUE;
 
 				if (robot[i].seeDir != 1)
@@ -870,7 +870,7 @@ void TimerFunction(int value)
 				robot[i].z -= 0.2;
 
 
-				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+				if (robot[0].x + 20 >= robot[1].x - 20 && robot[0].x - 20 <= robot[1].x + 20 && robot[0].z - 20 <= robot[1].z + 20 && robot[0].z + 20 >= robot[1].z - 20)
 					crashCheck = TRUE;
 
 				if (robot[i].seeDir != 2)
@@ -892,7 +892,7 @@ void TimerFunction(int value)
 				robot[i].x -= 0.2;
 
 
-				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+				if (robot[0].x + 20 >= robot[1].x - 20 && robot[0].x - 20 <= robot[1].x + 20 && robot[0].z - 20 <= robot[1].z + 20 && robot[0].z + 20 >= robot[1].z - 20)
 					crashCheck = TRUE;
 
 				if (robot[i].seeDir != 3)
@@ -913,13 +913,103 @@ void TimerFunction(int value)
 					robot[i].seeDir = 1;
 				robot[i].z += 0.2;
 
-				if (robot[0].x - 20 >= robot[1].x + 20 && robot[0].x + 20 <= robot[1].x - 20 && robot[0].z - 20 >= robot[1].z + 20 && robot[0].z + 20 <= robot[1].z - 20)
+				if (robot[0].x + 20 >= robot[1].x - 20 && robot[0].x - 20 <= robot[1].x + 20 && robot[0].z - 20 <= robot[1].z + 20 && robot[0].z + 20 >= robot[1].z - 20)
 					crashCheck = TRUE;
 
 				if (robot[i].seeDir != 4)
 					robot[i].z -= 0.4;
 			}
 		}
+	}
+
+	if (crashCheck == TRUE) {
+		if (robot[0].seeDir == 1) {
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[0].x + 0.2 >= TreePos[j][0] - 20 && robot[0].x + 0.2 <= TreePos[j][0] + 20 && robot[0].z >= TreePos[j][2] - 20 && robot[0].z <= TreePos[j][2] + 20)
+					while (robot[0].seeDir == 1)
+						robot[0].seeDir = rand() % 4 + 1;
+			}
+			
+			if (robot[0].x >= 180)
+				robot[0].seeDir = 2;
+			robot[0].x += 0.2;
+
+			robot[1].seeDir = robot[0].seeDir;
+			robot[1].x += 0.2;
+
+
+			if (robot[0].seeDir != 1) {
+				robot[0].x -= 0.4;
+				robot[1].x -= 0.4;
+			}
+
+		}
+
+		else if (robot[0].seeDir == 2) {
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[0].x - 0.2 >= TreePos[j][0] - 20 && robot[0].x - 0.2 <= TreePos[j][0] + 20 && robot[0].z >= TreePos[j][2] - 20 && robot[0].z <= TreePos[j][2] + 20)
+					while (robot[0].seeDir == 2)
+						robot[0].seeDir = rand() % 4 + 1;
+			}
+			if (robot[0].z <= -180)
+				robot[0].seeDir = 3;
+			robot[1].seeDir = robot[0].seeDir;
+			robot[1].z -= 0.2;
+			robot[0].z -= 0.2;
+
+			if (robot[0].seeDir != 2) {
+				robot[0].z += 0.4;
+				robot[1].z += 0.4;
+			}
+		}
+
+		else if (robot[0].seeDir == 3) {
+
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[0].x >= TreePos[j][0] - 20 && robot[0].x <= TreePos[j][0] + 20 && robot[0].z - 0.2 >= TreePos[j][2] - 20 && robot[0].z - 0.2 <= TreePos[j][2] + 20)
+					while (robot[0].seeDir == 3)
+						robot[0].seeDir = rand() % 4 + 1;
+			}
+
+			if (robot[0].x <= -180)
+				robot[0].seeDir = 4;
+
+			robot[1].seeDir = robot[0].seeDir;
+			robot[1].x -= 0.2;
+			robot[0].x -= 0.2;
+
+			if (robot[0].seeDir != 3) {
+				robot[0].x += 0.4;
+				robot[1].x += 0.4;
+			}
+		}
+
+		else if (robot[0].seeDir == 4) {
+
+
+			for (int j = 0; j < 10; ++j) {
+				if (robot[0].x >= TreePos[j][0] - 20 && robot[0].x <= TreePos[j][0] + 20 && robot[0].z + 0.2 >= TreePos[j][2] - 20 && robot[0].z + 0.2 <= TreePos[j][2] + 20)
+					while (robot[0].seeDir == 4)
+						robot[0].seeDir = rand() % 4 + 1;
+			}
+
+
+			if (robot[0].z >= 180)
+				robot[0].seeDir = 1;
+
+			robot[1].seeDir = robot[0].seeDir;
+			robot[1].z += 0.2;
+			robot[0].z += 0.2;
+
+			if (robot[0].seeDir != 4) {
+				robot[0].z -= 0.4;
+				robot[1].z -= 0.4;
+			}
+		}
+
 	}
 
 	glutTimerFunc(10, TimerFunction, 1);
