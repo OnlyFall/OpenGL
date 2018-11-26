@@ -12,6 +12,20 @@
 #define D3DXToRadian(degree)((degree) * (D3DX_PI / 180.f))
 #define D3DXToDegree(radian)((radian) * (180.f / D3DX_PI))
 
+
+struct Gun {
+	float x;
+	float y;
+	float z;
+
+	int count = 0;
+	int dir;
+
+	bool visible = FALSE;
+};
+
+static Gun gun[100];
+
 static float GetDirectionAngle(float x1, float y1, float x2, float y2)
 {
 	x2 -= x1;
@@ -641,6 +655,18 @@ GLvoid DrawRobot(int i)
 	glPopMatrix();
 }
 
+GLvoid DrawGun()
+{
+	for (int i = 0; i < 100; ++i) {
+		if (gun[i].visible == true) {
+			glPushMatrix();
+			glTranslatef(gun[i].x, gun[i].y, gun[i].z);
+			glColor3f(0.3f, 0.3f, 0.3f);
+			glutSolidSphere(5, 5, 5);
+			glPopMatrix();
+		}
+	}
+}
 
 
 static int checkCar = 0;
@@ -729,6 +755,8 @@ GLvoid drawScene(GLvoid)
 
 	DrawRobot(0);
 	DrawRobot(1);
+
+	DrawGun();
 
 	if(count > 2)
 		DrawTunel();
@@ -1026,10 +1054,61 @@ void TimerFunction(int value)
 
 	}
 
+	//ÃÑ¾Ë ¹ß»çºÎ
+
+	for (int i = 0; i < 100; ++i) {
+		if (gun[i].visible == TRUE) {
+			if (gun[i].dir == 1) {
+				gun[i].x++;
+				if (gun[i].x > 200)
+					gun[i].visible = FALSE;
+
+				for (int i = 0; i < 10; ++i) {
+					if (gun[i].x >= TreePos[i][0] - 20 && gun[i].x <= TreePos[i][0] + 20 && gun[i].z >= TreePos[i][2] - 20 && gun[i].z <= TreePos[i][2] + 20)
+						gun[i].visible = FALSE;
+				}
+			}
+
+			else if (gun[i].dir == 2) {
+				gun[i].z--;
+				if (gun[i].z < -200)
+					gun[i].visible = FALSE;
+
+				for (int i = 0; i < 10; ++i) {
+					if (gun[i].x >= TreePos[i][0] - 20 && gun[i].x <= TreePos[i][0] + 20 && gun[i].z >= TreePos[i][2] - 20 && gun[i].z <= TreePos[i][2] + 20)
+						gun[i].visible = FALSE;
+				}
+			}
+
+			else if (gun[i].dir == 3) {
+				gun[i].x--;
+				if (gun[i].x < -200)
+					gun[i].visible = FALSE;
+
+				for (int i = 0; i < 10; ++i) {
+					if (gun[i].x >= TreePos[i][0] - 20 && gun[i].x <= TreePos[i][0] + 20 && gun[i].z >= TreePos[i][2] - 20 && gun[i].z <= TreePos[i][2] + 20)
+						gun[i].visible = FALSE;
+				}
+			}
+
+			else if (gun[i].dir == 4) {
+				gun[i].z++;
+				if (gun[i].z > 200)
+					gun[i].visible = FALSE;
+
+				for (int i = 0; i < 10; ++i) {
+					if (gun[i].x >= TreePos[i][0] - 20 && gun[i].x <= TreePos[i][0] + 20 && gun[i].z >= TreePos[i][2] - 20 && gun[i].z <= TreePos[i][2] + 20)
+						gun[i].visible = FALSE;
+				}
+			}
+
+		}
+	}
+	
 	glutTimerFunc(10, TimerFunction, 1);
 }
 
-
+static int gunCount = 0;
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
@@ -1180,6 +1259,21 @@ void Keyboard(unsigned char key, int x, int y)
 			fogOn = FALSE;
 		break;
 
+	case ' ':
+		gun[gunCount].dir = robot[0].seeDir;
+		gun[gunCount].x = robot[0].x;
+		gun[gunCount].y = robot[0].y + 10;
+		gun[gunCount].z = robot[0].z;
+
+		gun[gunCount].visible = TRUE;
+
+		gunCount++;
+
+		if (gunCount == 100)
+			gunCount = 0;
+
+		break;
+
 	case 'q':
 		PostQuitMessage(0);
 		break;
@@ -1277,5 +1371,6 @@ void SpecialKeys(int key, int x, int y) {
 		robot[0].seeDir = 1;
 	else if (key == GLUT_KEY_LEFT)
 		robot[0].seeDir = 3;
+
 	glutPostRedisplay();
 }
