@@ -148,6 +148,7 @@ static Cam camera;
 static Cam FrontView;
 static Cam topView;
 static Cam Roll;
+static Cam robotView;
 
 static int cameraNum;
 static int count = 0;
@@ -737,6 +738,8 @@ GLvoid drawScene(GLvoid)
 		FrontView.drawCamera();
 	else if (cameraNum == 3)
 		Roll.drawCamera();
+	else if (cameraNum == 4)
+		robotView.drawCamera();
 
 	for (int i = 0; i < count; ++i)
 		DrawWall(Wall[i][0], Wall[i][1], Wall[i][2]);
@@ -1213,6 +1216,11 @@ void Keyboard(unsigned char key, int x, int y)
 		cameraNum = 3;
 		Reshape(800, 600);
 		break;
+
+	case '5':
+		mode = 2;
+		cameraNum = 4;
+		Reshape(800, 600);
 
 	case '9':
 		zZoom += 1;
