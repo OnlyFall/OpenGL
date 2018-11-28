@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 
-GLuint texture[6];GLubyte *pBytes;
+GLuint texture[7];
+GLubyte *pBytes;
 BITMAPINFO *info;
 
 GLuint LoadTexture(const char * filename, int width_1, int height_1)

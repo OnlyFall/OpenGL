@@ -285,6 +285,11 @@ GLvoid drawPlan(GLvoid)
 	}
 }
 
+GLvoid DrawCube()
+{
+
+}
+
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
