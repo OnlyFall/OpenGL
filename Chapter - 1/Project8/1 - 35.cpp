@@ -233,7 +233,9 @@ GLuint LoadTexture(const char * filename, int width_1, int height_1)
 	free(data);
 
 	return texture;
-}GLuint texture[6];GLubyte *pBytes;
+}
+GLuint texture[6];
+GLubyte *pBytes;
 BITMAPINFO *info;
 
 GLubyte * TexBits;

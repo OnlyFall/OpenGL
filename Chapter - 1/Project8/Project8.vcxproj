@@ -207,7 +207,12 @@
     <ClCompile Include="1 - 34.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="1 - 35.cpp" />
+    <ClCompile Include="1 - 35.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="1 - 36.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="1 - 4, 1 - 5.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -232,6 +237,7 @@
   <ItemGroup>
     <ClInclude Include="effect.h" />
     <ClInclude Include="KeyBoard.h" />
+    <ClInclude Include="load_image.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="weather.h" />
   </ItemGroup>
