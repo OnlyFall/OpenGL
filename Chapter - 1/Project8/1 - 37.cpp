@@ -303,11 +303,34 @@ GLvoid cutton()
 	glTexCoord2f(0.25f + s, 0.0f);
 	glVertex3f(-10, 40, 10);
 
-	glTexCoord2f(0.25f + s, 0.25f);
+	glTexCoord2f(0.25f + s, 1.f);
 	glVertex3f(10, 40, 10);
 
-	glTexCoord2f(0.0f + s, 0.25f);
+	glTexCoord2f(0.0f + s, 1.f);
 	glVertex3f(10, -40, 10);
+	glEnd();
+
+	glColor3f(1.f, 0.f, 1.f);
+	glBegin(GL_QUADS);
+
+	if (s < 0.25f)
+		glTexCoord2f(0.25f + s, 0.25f);
+	else
+		glTexCoord2f(0.25f + s - 1.f, 0.25f);
+	glVertex3f(10, -40, 10);
+
+
+	if (s < 0.5f)
+		glTexCoord2f(0.5f + s, 0.25f);
+	else
+		glTexCoord2f(0.5f + s - 1.f, 0.25f);
+	glVertex3f(10, 40, 10);
+
+	glTexCoord2f(0.5f + s, 0.5f);
+	glVertex3f(10, 40, -10);
+
+	glTexCoord2f(0.25f + s, 0.5f);
+	glVertex3f(10, -40, -10);
 	glEnd();
 
 	glBegin(GL_QUADS);
@@ -324,22 +347,7 @@ GLvoid cutton()
 	glVertex3f(10, -40, -10);
 	glEnd();
 
-	//¾ç¿·¸é
 
-	glColor3f(1.f, 0.f, 1.f);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.5f + s, 0.25f);
-	glVertex3f(10, -40, 10);
-
-	glTexCoord2f(0.5f + s, 0.25f);
-	glVertex3f(10, 40, 10);
-
-	glTexCoord2f(0.5f + s, 0.5f);
-	glVertex3f(10, 40, -10);
-
-	glTexCoord2f(0.25f + s, 0.5f);
-	glVertex3f(10, -40, -10);
-	glEnd();
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.75f + s, 0.75f);
