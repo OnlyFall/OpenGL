@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-GLuint texture[7];
+GLuint texture[8];
 GLubyte *pBytes;
 BITMAPINFO *info;
 

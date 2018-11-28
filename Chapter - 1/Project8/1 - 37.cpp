@@ -237,6 +237,7 @@ void SetupRC()
 	texture[4] = LoadTexture("texture5.bmp", 100, 100);
 	texture[5] = LoadTexture("texture6.bmp", 100, 100);
 	texture[6] = LoadTexture("texture7.bmp", 100, 100);
+	texture[7] = LoadTexture("CharterRight2.bmp", 200, 200);
 
 }
 
@@ -287,71 +288,70 @@ GLvoid DrawPlane()
 	glPopMatrix();
 }
 
+static float s, t;
+
 GLvoid cutton()
 {
 	glPushMatrix();
 	glTranslatef(70, 40, 0);
 
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glBindTexture(GL_TEXTURE_2D, texture[7]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
+	glTexCoord2f(0.0f + s, 0.0f);
 	glVertex3f(-10, -40, 10);
 
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(0.25f + s, 0.0f);
 	glVertex3f(-10, 40, 10);
 
-	glTexCoord2f(1.0f, 1.0f);
+	glTexCoord2f(0.25f + s, 0.25f);
 	glVertex3f(10, 40, 10);
 
-	glTexCoord2f(0.0f, 1.0f);
+	glTexCoord2f(0.0f + s, 0.25f);
 	glVertex3f(10, -40, 10);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
+	glTexCoord2f(0.5f + s, 0.5f);
 	glVertex3f(-10, -40, -10);
 
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(0.75f + s, 0.5f);
 	glVertex3f(-10, 40, -10);
 
-	glTexCoord2f(1.0f, 1.0f);
+	glTexCoord2f(0.75f + s, 0.75f);
 	glVertex3f(10, 40, -10);
 
-	glTexCoord2f(0.0f, 1.0f);
+	glTexCoord2f(0.5f + s, 0.75f);
 	glVertex3f(10, -40, -10);
 	glEnd();
 
 	//¾ç¿·¸é
 
 	glColor3f(1.f, 0.f, 1.f);
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
+	glTexCoord2f(0.5f + s, 0.25f);
 	glVertex3f(10, -40, 10);
 
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(0.5f + s, 0.25f);
 	glVertex3f(10, 40, 10);
 
-	glTexCoord2f(1.0f, 1.0f);
+	glTexCoord2f(0.5f + s, 0.5f);
 	glVertex3f(10, 40, -10);
 
-	glTexCoord2f(0.0f, 1.0f);
+	glTexCoord2f(0.25f + s, 0.5f);
 	glVertex3f(10, -40, -10);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
+	glTexCoord2f(0.75f + s, 0.75f);
 	glVertex3f(-10, -40, -10);
 
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(1.0f + s, 0.75f);
 	glVertex3f(-10, 40, -10);
 
-	glTexCoord2f(1.0f, 1.0f);
+	glTexCoord2f(1.0f + s, 1.0f);
 	glVertex3f(-10, 40, 10);
 
-	glTexCoord2f(0.0f, 1.0f);
+	glTexCoord2f(0.75f + s, 1.0f);
 	glVertex3f(-10, -40, 10);
 	glEnd();
 
@@ -750,6 +750,10 @@ void TimerFunction(int value)
 		moon.x = 50 * cos(3.141592 / 180.f * moon.rad);
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 	}
+
+	s += 0.1f;
+	if (s >= 1.f)
+		s = 0.f;
 
 	glutTimerFunc(1, TimerFunction, 100);
 }
