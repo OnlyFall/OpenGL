@@ -741,6 +741,8 @@ GLvoid drawScene(GLvoid)
 	else if (cameraNum == 4)
 		robotView.drawCamera();
 
+	
+
 	for (int i = 0; i < count; ++i)
 		DrawWall(Wall[i][0], Wall[i][1], Wall[i][2]);
 
@@ -788,10 +790,14 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (mode == 1) {
+		if (cameraNum == 4)
+			zZoom = 65;
+		else
+			zZoom = 45;
 		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다. // 1. 클리핑 공간 설정: 원근 투영인 경우
 		gluPerspective(zZoom, 1.0, 1.0, 1000.0);
 		glTranslatef(0.0, 0.0, -500.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
-		if (cameraNum == 3)
+		if (cameraNum == 3 || cameraNum == 4)
 			glTranslatef(0, 0, 500);
 	}
 	else if (mode == 2)
@@ -808,6 +814,17 @@ static BOOL roboR2 = FALSE;
 void TimerFunction(int value)
 {
 	glutPostRedisplay();
+	robotView.CenterEye(robot[0].x, robot[0].y + 40, robot[0].z);
+
+	if (robot[0].seeDir == 1)
+		robotView.EyeEye(robot[0].x - 1, robot[0].y + 40, robot[0].z);
+	else if (robot[0].seeDir == 2)
+		robotView.EyeEye(robot[0].x, robot[0].y + 40, robot[0].z + 1);
+	else if (robot[0].seeDir == 3)
+		robotView.EyeEye(robot[0].x + 1, robot[0].y + 40, robot[0].z);
+	else if (robot[0].seeDir == 4)
+		robotView.EyeEye(robot[0].x, robot[0].y + 40, robot[0].z - 1);
+
 
 	if (ppbool == FALSE) {
 		pp -= 1;
@@ -1218,7 +1235,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case '5':
-		mode = 2;
+		mode = 1;
 		cameraNum = 4;
 		Reshape(800, 600);
 
