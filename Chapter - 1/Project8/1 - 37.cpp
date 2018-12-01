@@ -237,7 +237,7 @@ void SetupRC()
 	texture[4] = LoadTexture("texture5.bmp", 100, 100);
 	texture[5] = LoadTexture("texture6.bmp", 100, 100);
 	texture[6] = LoadTexture("texture7.bmp", 100, 100);
-	texture[7] = LoadTexture("CharterRight2.bmp", 200, 200);
+	texture[7] = LoadTexture("CharterRight2.bmp", 80, 80);
 
 }
 
@@ -288,51 +288,49 @@ GLvoid DrawPlane()
 	glPopMatrix();
 }
 
-static float s, t;
+static float s = 0.f, t = 0.f;
 
 GLvoid cutton()
 {
+	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
-	glTranslatef(70, 40, 0);
 
 	glBindTexture(GL_TEXTURE_2D, texture[7]);
+	glTranslatef(70, 40, 0);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f + s, 0.0f);
-	glVertex3f(-10, -40, 10);
 
-	glTexCoord2f(0.25f + s, 0.0f);
-	glVertex3f(-10, 40, 10);
+	glTexCoord2f(0.5f + s, 0.5f);
+	glVertex3f(-10.f, -40.f, 10.f);
 
-	glTexCoord2f(0.25f + s, 1.f);
-	glVertex3f(10, 40, 10);
+	glTexCoord2f(0.75f + s, 0.5f);
+	glVertex3f(10.f, -40.f, 10.f);
 
-	glTexCoord2f(0.0f + s, 1.f);
-	glVertex3f(10, -40, 10);
+	glTexCoord2f(0.75f + s, 0.75f);
+	glVertex3f(10.f, 40.f, 10.f);
+
+	glTexCoord2f(0.5f + s, 0.75f);
+	glVertex3f(-10.f, 40.f, 10.f);
 	glEnd();
 
 	glColor3f(1.f, 0.f, 1.f);
-	glBegin(GL_QUADS);
 
-	if (s < 0.25f)
-		glTexCoord2f(0.25f + s, 0.25f);
-	else
-		glTexCoord2f(0.25f + s - 1.f, 0.25f);
+	glBindTexture(GL_TEXTURE_2D, texture[7]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.75f + s, 0.75f);
 	glVertex3f(10, -40, 10);
 
 
-	if (s < 0.5f)
-		glTexCoord2f(0.5f + s, 0.25f);
-	else
-		glTexCoord2f(0.5f + s - 1.f, 0.25f);
+	glTexCoord2f(1.0f + s, 0.75f);
 	glVertex3f(10, 40, 10);
 
-	glTexCoord2f(0.5f + s, 0.5f);
+	glTexCoord2f(1.0f + s, 1.0f);
 	glVertex3f(10, 40, -10);
 
-	glTexCoord2f(0.25f + s, 0.5f);
+	glTexCoord2f(0.75f + s, 1.0f);
 	glVertex3f(10, -40, -10);
 	glEnd();
 
+	glBindTexture(GL_TEXTURE_2D, texture[7]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.5f + s, 0.5f);
 	glVertex3f(-10, -40, -10);
@@ -348,7 +346,7 @@ GLvoid cutton()
 	glEnd();
 
 
-
+	glBindTexture(GL_TEXTURE_2D, texture[7]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.75f + s, 0.75f);
 	glVertex3f(-10, -40, -10);
@@ -706,7 +704,7 @@ GLvoid drawScene(GLvoid)
 
 	glPopMatrix();
 	glutSwapBuffers();
-	//	glFlush(); // 화면에 출력하기 
+	//   glFlush(); // 화면에 출력하기 
 }
 
 
@@ -744,14 +742,14 @@ void TimerFunction(int value)
 
 	if (AUTO == TRUE) {
 
-		/*	for (int i = 0; i < 2; ++i) {
-				rp[i].rad = (rp[i].rad + 1) % 360;
-			}
-			am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
-			am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
+		/*   for (int i = 0; i < 2; ++i) {
+		rp[i].rad = (rp[i].rad + 1) % 360;
+		}
+		am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
-			am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
-			am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);*/
+		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
+		am1[2] = 50 * sin(3.141592 / 180.f * rp[1].rad);*/
 
 		moon.rad = (moon.rad + 1) % 360;
 
@@ -865,10 +863,10 @@ void Keyboard(unsigned char key, int x, int y)
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 
 		//for (int i = 0; i < 2; ++i) {
-		//	rp[i].rad = (rp[i].rad + 10) % 360;
+		//   rp[i].rad = (rp[i].rad + 10) % 360;
 		//}
 
-	/*	am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+		/*   am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
 		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
@@ -885,12 +883,12 @@ void Keyboard(unsigned char key, int x, int y)
 		moon.z = 50 * sin(3.141592 / 180.f * moon.rad);
 
 		//for (int i = 0; i < 2; ++i) {
-		//	rp[i].rad -= 10;
-		//	if (rp[i].rad <= 0)
-		//		rp[i].rad = 360;
+		//   rp[i].rad -= 10;
+		//   if (rp[i].rad <= 0)
+		//      rp[i].rad = 360;
 		//}
 
-	/*	am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
+		/*   am[0] = 50 * cos(3.141592 / 180.f * rp[0].rad);
 		am[2] = 50 * sin(3.141592 / 180.f * rp[0].rad);
 
 		am1[0] = 50 * cos(3.141592 / 180.f * rp[1].rad);
