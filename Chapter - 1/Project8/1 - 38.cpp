@@ -338,11 +338,11 @@ GLvoid Models(GLvoid)
 		Sphere(0);
 		Cube(0);
 
-		char *string = "GL_ONE, GL_ZERO";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_ONE, GL_ZERO";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -367,11 +367,11 @@ GLvoid Models(GLvoid)
 		Sphere(1);
 		Cube(1);
 
-		char *string = "GL_ZERO, GL_ONE";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_ZERO, GL_ONE";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -397,11 +397,11 @@ GLvoid Models(GLvoid)
 		Sphere(2);
 		Cube(2);
 
-		char *string = "GL_ONE, GL_ONE";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_ONE, GL_ONE";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -427,11 +427,11 @@ GLvoid Models(GLvoid)
 		Sphere(3);
 		Cube(3);
 
-		char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -457,11 +457,11 @@ GLvoid Models(GLvoid)
 		Sphere(4);
 		Cube(4);
 
-		char *string = "GL_SRC_ALPHA, GL_ONE";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_SRC_ALPHA, GL_ONE";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -487,11 +487,11 @@ GLvoid Models(GLvoid)
 		Sphere(5);
 		Cube(5);
 
-		char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -517,11 +517,11 @@ GLvoid Models(GLvoid)
 		Sphere(6);
 		Cube(6);
 
-		char *string = "GL_ONE_MINUS_DST_COLOR, GL_ZERO";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_ONE_MINUS_DST_COLOR, GL_ZERO";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -547,11 +547,11 @@ GLvoid Models(GLvoid)
 		Sphere(7);
 		Cube(7);
 
-		char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 	glPushMatrix();
@@ -577,11 +577,11 @@ GLvoid Models(GLvoid)
 		Sphere(8);
 		Cube(8);
 
-		char *string = "GL_ONE, GL_ONE";
-		glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
-		int len = (int)strlen(string);
-		for (int i = 0; i < len; i++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
+		//char *string = "GL_ONE, GL_ONE";
+		//glRasterPos2f(-(int)strlen(string) * 3, -65); // 문자 출력할 위치 설정
+		//int len = (int)strlen(string);
+		//for (int i = 0; i < len; i++)
+		//	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, string[i]);
 	}
 	glPopMatrix();
 }
